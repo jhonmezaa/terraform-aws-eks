@@ -33,8 +33,10 @@ resource "aws_eks_access_policy_association" "this" {
 }
 
 # Optional: Cluster creator admin permissions
+# Only create when NOT using bootstrap_cluster_creator_admin_permissions
+# If bootstrap_cluster_creator_admin_permissions = true, AWS creates this automatically
 resource "aws_eks_access_entry" "cluster_creator" {
-  count = var.create && var.enable_cluster_creator_admin_permissions ? 1 : 0
+  count = var.create && var.enable_cluster_creator_admin_permissions && !try(var.cluster_access_config.bootstrap_cluster_creator_admin_permissions, false) ? 1 : 0
 
   cluster_name  = aws_eks_cluster.this[0].name
   principal_arn = data.aws_iam_session_context.current.issuer_arn
@@ -47,7 +49,7 @@ resource "aws_eks_access_entry" "cluster_creator" {
 }
 
 resource "aws_eks_access_policy_association" "cluster_creator" {
-  count = var.create && var.enable_cluster_creator_admin_permissions ? 1 : 0
+  count = var.create && var.enable_cluster_creator_admin_permissions && !try(var.cluster_access_config.bootstrap_cluster_creator_admin_permissions, false) ? 1 : 0
 
   cluster_name  = aws_eks_cluster.this[0].name
   principal_arn = data.aws_iam_session_context.current.issuer_arn

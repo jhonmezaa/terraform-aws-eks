@@ -468,7 +468,7 @@ variable "access_entries" {
 }
 
 variable "enable_cluster_creator_admin_permissions" {
-  description = "Create access entry for cluster creator with admin permissions"
+  description = "Create access entry for cluster creator with admin permissions. Only creates if cluster_access_config.bootstrap_cluster_creator_admin_permissions is false (when true, AWS creates it automatically)"
   type        = bool
   default     = true
 }
