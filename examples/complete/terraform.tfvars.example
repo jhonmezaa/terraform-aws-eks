@@ -1,0 +1,42 @@
+# Account and Project Configuration
+account_name = "prod"
+project_name = "myapp"
+
+# Cluster Configuration
+cluster_version = "1.31"
+
+# Network Configuration
+vpc_id = "vpc-0123456789abcdef0"
+
+# Subnets for cluster control plane (can be private or public)
+subnet_ids = [
+  "subnet-0123456789abcdef0",  # Private subnet AZ-a
+  "subnet-0123456789abcdef1",  # Private subnet AZ-b
+  "subnet-0123456789abcdef2"   # Private subnet AZ-c
+]
+
+# Private subnets for Fargate (MUST be private)
+private_subnet_ids = [
+  "subnet-0123456789abcdef0",  # Private subnet AZ-a
+  "subnet-0123456789abcdef1",  # Private subnet AZ-b
+  "subnet-0123456789abcdef2"   # Private subnet AZ-c
+]
+
+# Public API access (restrict to your organization's IP ranges)
+cluster_endpoint_public_access_cidrs = [
+  "203.0.113.0/24",  # Your office IP range
+  "198.51.100.0/24"  # Your VPN IP range
+]
+
+# IAM Role ARNs for access entries (optional)
+devops_team_role_arn    = "arn:aws:iam::123456789012:role/DevOpsTeam"
+developer_team_role_arn = "arn:aws:iam::123456789012:role/DeveloperTeam"
+
+# Tags
+tags = {
+  Environment = "prod"
+  ManagedBy   = "terraform"
+  Example     = "complete"
+  Team        = "platform"
+  CostCenter  = "engineering"
+}
