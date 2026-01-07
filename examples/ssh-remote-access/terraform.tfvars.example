@@ -1,0 +1,26 @@
+# General Configuration
+account_name = "dev"
+project_name = "eks-ssh"
+
+# Cluster Configuration
+cluster_version = "1.31"
+
+# VPC Configuration
+vpc_id     = "vpc-0123456789abcdef0"
+subnet_ids = ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"]
+
+# SSH Configuration
+ec2_key_pair_name           = "my-ec2-keypair"        # Must exist in AWS
+ssh_source_security_groups = ["sg-0123456789abcdef0"] # Bastion or VPN security group
+enable_public_ip           = false                    # Set true only for dev/testing
+
+# Optional: Create additional SSH security group
+create_ssh_security_group = false
+ssh_allowed_cidrs         = [] # e.g., ["10.0.0.0/8"] for VPN
+
+# Tags
+tags = {
+  Environment = "development"
+  ManagedBy   = "terraform"
+  AccessType  = "ssh-enabled"
+}

@@ -1,0 +1,29 @@
+# General Configuration
+account_name = "prod"
+project_name = "outpost-eks"
+
+# Cluster Configuration
+cluster_version = "1.31"
+
+# VPC Configuration
+vpc_id = "vpc-0123456789abcdef0"
+
+# AWS Outpost Configuration
+outpost_arn        = "arn:aws:outposts:us-east-1:123456789012:outpost/op-0123456789abcdef0"
+outpost_subnet_ids = ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1"]
+
+# Control Plane Configuration
+control_plane_instance_type = "m5.xlarge" # Must be available on your Outpost
+placement_group_name        = null         # Optional: placement group for control plane
+
+# Node Configuration
+node_instance_type = "m5.large" # Must be available on your Outpost
+edge_instance_type = "c5.large" # Must be available on your Outpost
+
+# Tags
+tags = {
+  Environment = "production"
+  ManagedBy   = "terraform"
+  Location    = "outpost"
+  CostCenter  = "on-premises-infrastructure"
+}

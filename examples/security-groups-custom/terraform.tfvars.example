@@ -1,0 +1,10 @@
+account_name    = "prod"
+project_name    = "eks-custom-sg"
+cluster_version = "1.31"
+vpc_id          = "vpc-xxx"
+subnet_ids      = ["subnet-xxx", "subnet-yyy"]
+
+tags = {
+  Environment    = "production"
+  SecurityGroups = "custom"
+}

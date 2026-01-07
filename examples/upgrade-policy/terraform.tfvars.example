@@ -1,0 +1,23 @@
+# General Configuration
+account_name = "prod"
+project_name = "eks-extended"
+
+# Cluster Configuration
+cluster_version = "1.28" # Use older version with extended support
+
+# VPC Configuration
+vpc_id     = "vpc-0123456789abcdef0"
+subnet_ids = ["subnet-0123456789abcdef0", "subnet-0123456789abcdef1", "subnet-0123456789abcdef2"]
+
+# Upgrade Policy Configuration
+upgrade_support_type = "EXTENDED" # Options: STANDARD (14 months) or EXTENDED (26 months)
+support_end_date     = "2025-12-31" # For tracking purposes
+
+# Tags
+tags = {
+  Environment    = "production"
+  ManagedBy      = "terraform"
+  UpgradePolicy  = "extended"
+  CostCenter     = "platform-engineering"
+  ComplianceTeam = "security-ops"
+}
