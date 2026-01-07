@@ -1,0 +1,29 @@
+# Account and Project
+account_name = "dev"
+project_name = "automode"
+
+# Cluster Configuration
+cluster_version = "1.31" # Auto Mode requires >= 1.31
+
+# VPC Configuration
+vpc_id = "vpc-xxxxxxxxxxxxxxxxx"
+subnet_ids = [
+  "subnet-xxxxxxxxxxxxxxxxx", # Private subnet AZ a
+  "subnet-yyyyyyyyyyyyyyyyy", # Private subnet AZ b
+  "subnet-zzzzzzzzzzzzzzzzz"  # Private subnet AZ c
+]
+
+# Endpoint Access
+cluster_endpoint_private_access = true
+cluster_endpoint_public_access  = true
+
+# Optional: KMS Encryption
+create_kms_key = false
+
+# Tags
+tags = {
+  Environment = "development"
+  Team        = "platform"
+  ManagedBy   = "Terraform"
+  Example     = "eks-auto-mode"
+}

@@ -148,6 +148,28 @@ variable "bootstrap_self_managed_addons" {
 }
 
 ################################################################################
+# EKS Auto Mode
+################################################################################
+
+variable "enable_auto_mode" {
+  description = "Enable EKS Auto Mode for fully managed compute infrastructure"
+  type        = bool
+  default     = false
+}
+
+variable "auto_mode_node_pools" {
+  description = "List of node pools for EKS Auto Mode (e.g., ['general-purpose'])"
+  type        = list(string)
+  default     = ["general-purpose"]
+}
+
+variable "auto_mode_node_role_arn" {
+  description = "IAM role ARN for Auto Mode nodes (uses shared node role if not specified)"
+  type        = string
+  default     = null
+}
+
+################################################################################
 # Cluster IAM Role
 ################################################################################
 

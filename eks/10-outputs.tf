@@ -391,3 +391,22 @@ output "eks_region" {
   description = "AWS region where the EKS cluster is deployed (alias for cluster_region for backwards compatibility)"
   value       = data.aws_region.current.id
 }
+
+################################################################################
+# Auto Mode Outputs
+################################################################################
+
+output "auto_mode_enabled" {
+  description = "Whether EKS Auto Mode is enabled"
+  value       = var.enable_auto_mode
+}
+
+output "auto_mode_node_pools" {
+  description = "List of node pools configured for EKS Auto Mode"
+  value       = var.enable_auto_mode ? var.auto_mode_node_pools : null
+}
+
+output "auto_mode_node_role_arn" {
+  description = "IAM role ARN used by Auto Mode nodes"
+  value       = var.enable_auto_mode ? (var.auto_mode_node_role_arn != null ? var.auto_mode_node_role_arn : (var.create_node_iam_role ? aws_iam_role.node[0].arn : null)) : null
+}
