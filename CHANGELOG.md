@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-01-07
+
+### 🔧 IMPROVEMENTS
+
+#### Provider Version Requirements
+- **Updated AWS Provider constraint** from `>= 5.79` to `~> 6.0`
+  - Uses pessimistic version constraint for better version management
+  - Allows minor and patch updates within 6.x (6.0 - 6.999)
+  - Prevents breaking changes from major version upgrades (e.g., 7.0)
+  - Applied across all modules and examples
+- **Updated TLS Provider** to `~> 3.0` for consistency
+
+#### Benefits of ~> Constraint
+- ✅ Automatic minor/patch updates (security and features)
+- ✅ Protection against breaking changes (major versions)
+- ✅ Consistent versioning across module and examples
+- ✅ Better compatibility management
+
 ## [2.1.0] - 2026-01-07
 
 ### ✨ NEW FEATURES

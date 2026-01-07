@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.79" # Required for EKS Auto Mode
+      version = "~> 6.0" # Required for EKS Auto Mode
     }
   }
 }
