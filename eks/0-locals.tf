@@ -1,6 +1,28 @@
 locals {
+  # Auto-generate region prefix if not provided
+  region_prefix_map = {
+    "us-east-1"      = "ause1"
+    "us-east-2"      = "ause2"
+    "us-west-1"      = "usw1"
+    "us-west-2"      = "usw2"
+    "eu-west-1"      = "euw1"
+    "eu-west-2"      = "euw2"
+    "eu-west-3"      = "euw3"
+    "eu-central-1"   = "euc1"
+    "eu-north-1"     = "eun1"
+    "ap-southeast-1" = "apse1"
+    "ap-southeast-2" = "apse2"
+    "ap-northeast-1" = "apne1"
+    "ap-northeast-2" = "apne2"
+    "ap-south-1"     = "aps1"
+    "sa-east-1"      = "sae1"
+    "ca-central-1"   = "cac1"
+  }
+
+  region_prefix = var.region_prefix != null ? var.region_prefix : lookup(local.region_prefix_map, data.aws_region.current.id, "aws")
+
   # Cluster name
-  cluster_name = var.cluster_name != null ? var.cluster_name : "${var.region_prefix}-eks-cluster-${var.account_name}-${var.project_name}"
+  cluster_name = var.cluster_name != null ? var.cluster_name : "${local.region_prefix}-eks-cluster-${var.account_name}-${var.project_name}"
 
   # Security groups
   cluster_security_group_id = var.create_cluster_security_group ? aws_security_group.cluster[0].id : var.cluster_security_group_id

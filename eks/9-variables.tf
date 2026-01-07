@@ -101,7 +101,7 @@ variable "cluster_ip_family" {
   default     = null
 
   validation {
-    condition     = var.cluster_ip_family == null || contains(["ipv4", "ipv6"], var.cluster_ip_family)
+    condition     = var.cluster_ip_family == null ? true : contains(["ipv4", "ipv6"], var.cluster_ip_family)
     error_message = "Cluster IP family must be either ipv4 or ipv6"
   }
 }
