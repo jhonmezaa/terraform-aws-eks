@@ -150,7 +150,7 @@ resource "aws_eks_cluster" "this" {
     }
   }
 
-  bootstrap_self_managed_addons = var.bootstrap_self_managed_addons
+  bootstrap_self_managed_addons = var.enable_auto_mode ? false : var.bootstrap_self_managed_addons
 
   tags = merge(
     local.cluster_tags,
