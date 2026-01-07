@@ -5,8 +5,8 @@
 resource "aws_security_group" "cluster" {
   count = var.create && var.create_cluster_security_group ? 1 : 0
 
-  name        = var.cluster_security_group_name != null ? var.cluster_security_group_name : "${local.cluster_name}-cluster"
-  name_prefix = var.cluster_security_group_name == null && var.cluster_security_group_use_name_prefix ? "${local.cluster_name}-cluster-" : null
+  name        = !var.cluster_security_group_use_name_prefix ? coalesce(var.cluster_security_group_name, "${local.cluster_name}-cluster") : null
+  name_prefix = var.cluster_security_group_use_name_prefix ? "${local.cluster_name}-cluster-" : null
   description = var.cluster_security_group_description
   vpc_id      = var.vpc_id
 
@@ -67,8 +67,8 @@ resource "aws_security_group_rule" "cluster_additional" {
 resource "aws_security_group" "node" {
   count = var.create && var.create_node_security_group ? 1 : 0
 
-  name        = var.node_security_group_name != null ? var.node_security_group_name : "${local.cluster_name}-node"
-  name_prefix = var.node_security_group_name == null && var.node_security_group_use_name_prefix ? "${local.cluster_name}-node-" : null
+  name        = !var.node_security_group_use_name_prefix ? coalesce(var.node_security_group_name, "${local.cluster_name}-node") : null
+  name_prefix = var.node_security_group_use_name_prefix ? "${local.cluster_name}-node-" : null
   description = var.node_security_group_description
   vpc_id      = var.vpc_id
 

@@ -5,8 +5,8 @@
 resource "aws_iam_role" "cluster" {
   count = var.create && var.create_cluster_iam_role ? 1 : 0
 
-  name        = var.cluster_iam_role_name != null ? var.cluster_iam_role_name : "${local.cluster_name}-cluster"
-  name_prefix = var.cluster_iam_role_name == null && var.cluster_iam_role_use_name_prefix ? "${local.cluster_name}-cluster-" : null
+  name        = !var.cluster_iam_role_use_name_prefix ? coalesce(var.cluster_iam_role_name, "${local.cluster_name}-cluster") : null
+  name_prefix = var.cluster_iam_role_use_name_prefix ? "${local.cluster_name}-cluster-" : null
   path        = var.cluster_iam_role_path
   description = var.cluster_iam_role_description
 
@@ -79,12 +79,20 @@ resource "aws_eks_cluster" "this" {
   }
 
   dynamic "kubernetes_network_config" {
-    for_each = var.cluster_ip_family != null || var.cluster_service_ipv4_cidr != null || var.cluster_service_ipv6_cidr != null ? [1] : []
+    for_each = var.cluster_ip_family != null || var.cluster_service_ipv4_cidr != null || var.cluster_service_ipv6_cidr != null || var.enable_auto_mode ? [1] : []
 
     content {
       ip_family         = var.cluster_ip_family
       service_ipv4_cidr = var.cluster_service_ipv4_cidr
       service_ipv6_cidr = var.cluster_service_ipv6_cidr
+
+      dynamic "elastic_load_balancing" {
+        for_each = var.enable_auto_mode ? [1] : []
+
+        content {
+          enabled = true
+        }
+      }
     }
   }
 
@@ -132,6 +140,16 @@ resource "aws_eks_cluster" "this" {
     }
   }
 
+  dynamic "storage_config" {
+    for_each = var.enable_auto_mode ? [1] : []
+
+    content {
+      block_storage {
+        enabled = true
+      }
+    }
+  }
+
   bootstrap_self_managed_addons = var.bootstrap_self_managed_addons
 
   tags = merge(
@@ -160,8 +178,8 @@ resource "aws_eks_cluster" "this" {
 resource "aws_iam_role" "node" {
   count = var.create && var.create_node_iam_role ? 1 : 0
 
-  name        = var.node_iam_role_name != null ? var.node_iam_role_name : "${local.cluster_name}-node"
-  name_prefix = var.node_iam_role_name == null && var.node_iam_role_use_name_prefix ? "${local.cluster_name}-node-" : null
+  name        = !var.node_iam_role_use_name_prefix ? coalesce(var.node_iam_role_name, "${local.cluster_name}-node") : null
+  name_prefix = var.node_iam_role_use_name_prefix ? "${local.cluster_name}-node-" : null
   path        = var.node_iam_role_path
   description = var.node_iam_role_description
 
