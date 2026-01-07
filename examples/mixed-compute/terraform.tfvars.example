@@ -1,0 +1,31 @@
+# Account and Project Configuration
+account_name = "prod"
+project_name = "mixed-app"
+
+# Cluster Configuration
+cluster_version = "1.31"
+
+# Network Configuration
+vpc_id = "vpc-0123456789abcdef0"
+
+# Subnets for cluster and EC2 nodes (can be private or public)
+subnet_ids = [
+  "subnet-0123456789abcdef0",
+  "subnet-0123456789abcdef1",
+  "subnet-0123456789abcdef2"
+]
+
+# Private subnets for Fargate (MUST be private with NAT)
+private_subnet_ids = [
+  "subnet-0123456789abcdef0",
+  "subnet-0123456789abcdef1",
+  "subnet-0123456789abcdef2"
+]
+
+# Tags
+tags = {
+  Environment = "prod"
+  ManagedBy   = "terraform"
+  Example     = "mixed-compute"
+  Team        = "platform"
+}

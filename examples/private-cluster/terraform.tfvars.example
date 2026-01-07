@@ -1,0 +1,35 @@
+# Account and Project Configuration
+account_name = "prod"
+project_name = "secure-app"
+
+# Cluster Configuration
+cluster_version = "1.31"
+
+# Network Configuration
+vpc_id = "vpc-0123456789abcdef0"
+
+# MUST be private subnets only (no internet gateway route)
+private_subnet_ids = [
+  "subnet-0123456789abcdef0",  # Private subnet AZ-a
+  "subnet-0123456789abcdef1",  # Private subnet AZ-b
+  "subnet-0123456789abcdef2"   # Private subnet AZ-c
+]
+
+# Route table IDs for S3 VPC endpoint (gateway type)
+private_route_table_ids = [
+  "rtb-0123456789abcdef0",
+  "rtb-0123456789abcdef1"
+]
+
+# Create VPC endpoints for AWS service access
+create_vpc_endpoints = true
+
+# Tags
+tags = {
+  Environment = "prod"
+  ManagedBy   = "terraform"
+  Example     = "private-cluster"
+  Security    = "high"
+  Compliance  = "required"
+  Team        = "platform"
+}

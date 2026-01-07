@@ -1,0 +1,28 @@
+# Account and Project Configuration
+account_name = "dev"
+project_name = "ipv6-app"
+
+# Cluster Configuration
+cluster_version = "1.31"
+
+# Network Configuration
+# IMPORTANT: VPC and subnets must have IPv6 CIDR blocks assigned
+vpc_id = "vpc-0123456789abcdef0"  # Must have IPv6 CIDR
+
+subnet_ids = [
+  "subnet-0123456789abcdef0",  # Must have IPv6 CIDR
+  "subnet-0123456789abcdef1",
+  "subnet-0123456789abcdef2"
+]
+
+# Optional: Specify service IPv6 CIDR (auto-assigned if null)
+cluster_service_ipv6_cidr = null  # e.g., "fd00::/108"
+
+# Tags
+tags = {
+  Environment = "dev"
+  ManagedBy   = "terraform"
+  Example     = "ipv6-cluster"
+  IPFamily    = "dual-stack"
+  Team        = "platform"
+}

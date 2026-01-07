@@ -1,0 +1,23 @@
+# Account and Project Configuration
+account_name = "dev"
+project_name = "myapp"
+
+# Cluster Configuration
+cluster_version = "1.31"
+
+# Network Configuration
+# Replace with your VPC ID and subnet IDs
+vpc_id = "vpc-0123456789abcdef0"
+subnet_ids = [
+  "subnet-0123456789abcdef0",  # Private subnet AZ-a
+  "subnet-0123456789abcdef1",  # Private subnet AZ-b
+  "subnet-0123456789abcdef2"   # Private subnet AZ-c
+]
+
+# Tags
+tags = {
+  Environment = "dev"
+  ManagedBy   = "terraform"
+  Example     = "basic-managed-nodes"
+  Team        = "platform"
+}

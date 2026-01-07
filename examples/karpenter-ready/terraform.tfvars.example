@@ -1,0 +1,23 @@
+# Account and Project Configuration
+account_name = "prod"
+project_name = "karpenter-app"
+
+# Cluster Configuration
+cluster_version = "1.31"
+
+# Network Configuration
+vpc_id = "vpc-0123456789abcdef0"
+subnet_ids = [
+  "subnet-0123456789abcdef0",
+  "subnet-0123456789abcdef1",
+  "subnet-0123456789abcdef2"
+]
+
+# Tags
+tags = {
+  Environment = "prod"
+  ManagedBy   = "terraform"
+  Example     = "karpenter-ready"
+  Autoscaler  = "karpenter"
+  Team        = "platform"
+}
