@@ -122,6 +122,16 @@ resource "aws_eks_cluster" "this" {
     }
   }
 
+  dynamic "compute_config" {
+    for_each = var.enable_auto_mode ? [1] : []
+
+    content {
+      enabled       = true
+      node_pools    = var.auto_mode_node_pools
+      node_role_arn = var.auto_mode_node_role_arn != null ? var.auto_mode_node_role_arn : (var.create_node_iam_role ? aws_iam_role.node[0].arn : null)
+    }
+  }
+
   bootstrap_self_managed_addons = var.bootstrap_self_managed_addons
 
   tags = merge(
@@ -186,6 +196,19 @@ resource "aws_iam_role_policy_attachment" "node" {
 
 resource "aws_iam_role_policy_attachment" "node_additional" {
   for_each = var.create && var.create_node_iam_role ? var.node_iam_additional_policies : {}
+
+  role       = aws_iam_role.node[0].name
+  policy_arn = each.value
+}
+
+# Auto Mode IAM Policies
+resource "aws_iam_role_policy_attachment" "node_auto_mode" {
+  for_each = var.create && var.create_node_iam_role && var.enable_auto_mode ? toset([
+    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy"
+  ]) : []
 
   role       = aws_iam_role.node[0].name
   policy_arn = each.value

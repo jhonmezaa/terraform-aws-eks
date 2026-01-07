@@ -5,6 +5,73 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-01-07
+
+### ✨ NEW FEATURES
+
+#### EKS Auto Mode Support
+- **EKS Auto Mode** - Fully managed compute infrastructure
+  - Automatic node provisioning and scaling based on pod requirements
+  - AWS-managed patching and updates (max 21-day instance lifetime)
+  - Zero infrastructure management overhead
+  - Cost optimization while maintaining flexibility
+  - Compute configuration via `compute_config` block
+  - Node pool support (currently: `general-purpose`)
+  - Requires Kubernetes >= 1.31 and AWS Provider >= 5.79
+
+#### Auto Mode IAM Policies
+- Automatic attachment of required IAM policies when Auto Mode is enabled:
+  - `AmazonEKSComputePolicy` - Compute management
+  - `AmazonEKSBlockStoragePolicy` - EBS volume management
+  - `AmazonEKSLoadBalancingPolicy` - Load balancer integration
+  - `AmazonEKSNetworkingPolicy` - VPC networking
+
+#### Variables
+- `enable_auto_mode` - Enable/disable Auto Mode (default: `false`)
+- `auto_mode_node_pools` - List of node pools (default: `["general-purpose"]`)
+- `auto_mode_node_role_arn` - Custom IAM role for Auto Mode nodes (optional)
+
+#### Outputs
+- `auto_mode_enabled` - Auto Mode status
+- `auto_mode_node_pools` - Configured node pools
+- `auto_mode_node_role_arn` - IAM role ARN for Auto Mode nodes
+
+#### Examples
+- **eks-auto-mode** - Complete example with Auto Mode
+  - Fully managed compute with zero node configuration
+  - IRSA enabled for service accounts
+  - Modern access entries (API_AND_CONFIG_MAP)
+  - Control plane logging to CloudWatch
+  - Auto-created security groups
+  - Optional KMS encryption
+
+### 🔧 IMPROVEMENTS
+
+#### Provider Requirements
+- Updated AWS provider minimum version to >= 5.79 (required for Auto Mode)
+
+#### Documentation
+- Comprehensive Auto Mode example README
+- Architecture diagrams and cost comparisons
+- Auto Mode vs Traditional Node Groups comparison table
+- Troubleshooting and monitoring guides
+
+### 📝 NOTES
+
+**Auto Mode Limitations:**
+- No SSH/SSM access to EC2 instances (managed by AWS)
+- Custom AMIs not supported (uses AWS-optimized images)
+- Additional cost: ~12% of EC2 instance costs
+- Kubernetes version must be >= 1.31
+
+**When to Use Auto Mode:**
+- ✅ Simplified operations and reduced overhead
+- ✅ Automatic scaling based on pod requirements
+- ✅ No manual patching required
+- ❌ Need SSH access to nodes
+- ❌ Require custom AMIs or bootstrap scripts
+- ❌ Cost-sensitive deployments (12% overhead)
+
 ## [2.0.0] - 2026-01-07
 
 ### 🚨 BREAKING CHANGES
