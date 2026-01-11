@@ -86,21 +86,6 @@ locals {
     )
   }
 
-  # Self-managed node groups with defaults
-  self_managed_node_groups = {
-    for k, v in var.self_managed_node_groups : k => merge(
-      {
-        create_iam_role                    = var.create_node_iam_role ? false : true
-        iam_role_name                      = var.create_node_iam_role ? try(aws_iam_role.node[0].name, null) : null
-        security_group_ids                 = local.node_security_group_ids
-        iam_role_policies                  = var.node_iam_policies
-        cluster_endpoint                   = try(aws_eks_cluster.this[0].endpoint, "")
-        cluster_certificate_authority_data = try(aws_eks_cluster.this[0].certificate_authority[0].data, "")
-      },
-      v
-    )
-  }
-
   # Fargate profiles with defaults
   fargate_profiles = {
     for k, v in var.fargate_profiles : k => merge(

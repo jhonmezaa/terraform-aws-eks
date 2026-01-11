@@ -14,7 +14,7 @@ resource "aws_iam_role" "cluster" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "sts:AssumeRole"
+        Action = var.enable_auto_mode ? ["sts:AssumeRole", "sts:TagSession"] : ["sts:AssumeRole"]
         Effect = "Allow"
         Principal = {
           Service = "eks.${local.dns_suffix}"
@@ -41,6 +41,20 @@ resource "aws_iam_role_policy_attachment" "cluster" {
 
 resource "aws_iam_role_policy_attachment" "cluster_additional" {
   for_each = var.create && var.create_cluster_iam_role ? var.cluster_iam_role_additional_policies : {}
+
+  role       = aws_iam_role.cluster[0].name
+  policy_arn = each.value
+}
+
+# Auto Mode policies for cluster role
+# Required when enable_auto_mode = true
+resource "aws_iam_role_policy_attachment" "cluster_auto_mode" {
+  for_each = var.create && var.create_cluster_iam_role && var.enable_auto_mode ? toset([
+    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy",
+    "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy",
+  ]) : []
 
   role       = aws_iam_role.cluster[0].name
   policy_arn = each.value
@@ -122,11 +136,11 @@ resource "aws_eks_cluster" "this" {
   }
 
   dynamic "access_config" {
-    for_each = var.cluster_access_config != null ? [var.cluster_access_config] : []
+    for_each = var.create ? [1] : []
 
     content {
-      authentication_mode                         = try(access_config.value.authentication_mode, "API_AND_CONFIG_MAP")
-      bootstrap_cluster_creator_admin_permissions = try(access_config.value.bootstrap_cluster_creator_admin_permissions, true)
+      authentication_mode                         = try(var.cluster_access_config.authentication_mode, "API_AND_CONFIG_MAP")
+      bootstrap_cluster_creator_admin_permissions = try(var.cluster_access_config.bootstrap_cluster_creator_admin_permissions, true)
     }
   }
 
@@ -165,6 +179,7 @@ resource "aws_eks_cluster" "this" {
 
   depends_on = [
     aws_iam_role_policy_attachment.cluster,
+    aws_iam_role_policy_attachment.cluster_auto_mode,
     aws_cloudwatch_log_group.this,
     aws_security_group_rule.cluster_ingress_node_443,
     aws_security_group_rule.node_ingress_cluster_443,
@@ -206,7 +221,7 @@ resource "aws_iam_role" "node" {
 }
 
 resource "aws_iam_role_policy_attachment" "node" {
-  for_each = var.create && var.create_node_iam_role ? var.node_iam_policies : {}
+  for_each = var.create && var.create_node_iam_role && !var.enable_auto_mode ? var.node_iam_policies : {}
 
   role       = aws_iam_role.node[0].name
   policy_arn = each.value
@@ -219,13 +234,11 @@ resource "aws_iam_role_policy_attachment" "node_additional" {
   policy_arn = each.value
 }
 
-# Auto Mode IAM Policies
+# Auto Mode IAM Policies (minimal policies required for Auto Mode)
 resource "aws_iam_role_policy_attachment" "node_auto_mode" {
   for_each = var.create && var.create_node_iam_role && var.enable_auto_mode ? toset([
-    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy",
-    "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy"
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
   ]) : []
 
   role       = aws_iam_role.node[0].name

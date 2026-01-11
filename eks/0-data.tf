@@ -26,7 +26,7 @@ data "aws_ssm_parameter" "eks_ami_release_version" {
 data "aws_eks_addon_version" "this" {
   for_each = var.create && var.cluster_addons != null ? var.cluster_addons : {}
 
-  addon_name         = try(each.value.addon_name, each.key)
+  addon_name         = coalesce(each.value.addon_name, each.key)
   kubernetes_version = var.cluster_version
   most_recent        = try(each.value.most_recent, true)
 }

@@ -50,39 +50,40 @@ module "eks" {
   # Access Entries (Modern IAM - replaces aws-auth ConfigMap)
   enable_cluster_creator_admin_permissions = true
 
-  access_entries = {
-    # Admin access for DevOps team
-    devops_admin = {
-      principal_arn     = var.devops_team_role_arn
-      type              = "STANDARD"
-      kubernetes_groups = ["system:masters"]
-
-      policy_associations = {
-        admin = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
-
-    # Read-only access for developers
-    developer_readonly = {
-      principal_arn     = var.developer_team_role_arn
-      type              = "STANDARD"
-      kubernetes_groups = ["developers"]
-
-      policy_associations = {
-        view = {
-          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
-          access_scope = {
-            type = "cluster"
-          }
-        }
-      }
-    }
-  }
+  # Commented out - requires external IAM roles
+  # access_entries = {
+  #   # Admin access for DevOps team
+  #   devops_admin = {
+  #     principal_arn     = var.devops_team_role_arn
+  #     type              = "STANDARD"
+  #     kubernetes_groups = ["system:masters"]
+  #
+  #     policy_associations = {
+  #       admin = {
+  #         policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+  #         access_scope = {
+  #           type = "cluster"
+  #         }
+  #       }
+  #     }
+  #   }
+  #
+  #   # Read-only access for developers
+  #   developer_readonly = {
+  #     principal_arn     = var.developer_team_role_arn
+  #     type              = "STANDARD"
+  #     kubernetes_groups = ["developers"]
+  #
+  #     policy_associations = {
+  #       view = {
+  #         policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSViewPolicy"
+  #         access_scope = {
+  #           type = "cluster"
+  #         }
+  #       }
+  #     }
+  #   }
+  # }
 
   # IRSA (IAM Roles for Service Accounts)
   enable_irsa = true

@@ -20,9 +20,8 @@ module "eks" {
   # IRSA (IAM Roles for Service Accounts)
   enable_irsa = true
 
-  # No managed or self-managed node groups
-  managed_node_groups      = {}
-  self_managed_node_groups = {}
+  # No managed node groups
+  managed_node_groups = {}
 
   # Fargate Profiles
   fargate_profiles = {
