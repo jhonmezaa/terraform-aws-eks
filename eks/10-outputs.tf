@@ -246,50 +246,6 @@ output "managed_node_group_iam_role_arns" {
 }
 
 ################################################################################
-# Self-Managed Node Groups
-################################################################################
-
-output "self_managed_node_groups" {
-  description = "Map of all self-managed node groups with complete configuration"
-  value       = module.self_managed_node_group
-}
-
-output "self_managed_node_group_autoscaling_group_ids" {
-  description = "Map of self-managed node group ASG IDs"
-  value       = { for k, v in module.self_managed_node_group : k => v.autoscaling_group_id }
-}
-
-output "self_managed_node_group_autoscaling_group_names" {
-  description = "Map of self-managed node group ASG names"
-  value       = { for k, v in module.self_managed_node_group : k => v.autoscaling_group_name }
-}
-
-output "self_managed_node_group_autoscaling_group_arns" {
-  description = "Map of self-managed node group ASG ARNs"
-  value       = { for k, v in module.self_managed_node_group : k => v.autoscaling_group_arn }
-}
-
-output "self_managed_node_group_launch_template_ids" {
-  description = "Map of self-managed node group launch template IDs"
-  value       = { for k, v in module.self_managed_node_group : k => v.launch_template_id }
-}
-
-output "self_managed_node_group_launch_template_arns" {
-  description = "Map of self-managed node group launch template ARNs"
-  value       = { for k, v in module.self_managed_node_group : k => v.launch_template_arn }
-}
-
-output "self_managed_node_group_iam_role_arns" {
-  description = "Map of self-managed node group IAM role ARNs"
-  value       = { for k, v in module.self_managed_node_group : k => v.iam_role_arn }
-}
-
-output "self_managed_node_group_iam_instance_profile_arns" {
-  description = "Map of self-managed node group IAM instance profile ARNs"
-  value       = { for k, v in module.self_managed_node_group : k => v.iam_instance_profile_arn }
-}
-
-################################################################################
 # Fargate Profiles
 ################################################################################
 

@@ -6,7 +6,7 @@ resource "aws_eks_addon" "before_compute" {
   for_each = var.create ? local.addons_before_compute : {}
 
   cluster_name = aws_eks_cluster.this[0].name
-  addon_name   = try(each.value.addon_name, each.key)
+  addon_name   = coalesce(each.value.addon_name, each.key)
 
   addon_version               = try(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
   configuration_values        = try(each.value.configuration_values, null)
@@ -35,7 +35,7 @@ resource "aws_eks_addon" "this" {
   for_each = var.create ? local.addons_after_compute : {}
 
   cluster_name = aws_eks_cluster.this[0].name
-  addon_name   = try(each.value.addon_name, each.key)
+  addon_name   = coalesce(each.value.addon_name, each.key)
 
   addon_version               = try(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
   configuration_values        = try(each.value.configuration_values, null)
@@ -57,7 +57,6 @@ resource "aws_eks_addon" "this" {
 
   depends_on = [
     module.managed_node_group,
-    module.self_managed_node_group,
     module.fargate_profile,
   ]
 }

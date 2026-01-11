@@ -1,30 +1,16 @@
 # Basic EKS Cluster with Managed Node Groups Example
 
-module "vpc" {
-  source = "../../../terraform-aws-vpc/vpc"
-
-  account_name   = var.account_name
-  project_name   = var.project_name
-  vpc_cidr_block = var.vpc_cidr_block
-  azs            = var.azs
-
-  public_subnets  = var.public_subnets
-  private_subnets = var.private_subnets
-
-  enable_nat_gateway = true
-  single_nat_gateway = true
-
-  tags_common = var.tags_common
-}
-
 module "eks" {
   source = "../../eks"
 
-  cluster_name    = "${var.account_name}-${var.project_name}"
-  cluster_version = var.cluster_version
+  # General
+  account_name = var.account_name
+  project_name = var.project_name
 
-  vpc_id     = module.vpc.vpc_id
-  subnet_ids = module.vpc.private_subnets
+  # Cluster Configuration
+  cluster_version = var.cluster_version
+  vpc_id          = var.vpc_id
+  subnet_ids      = var.subnet_ids
 
   managed_node_groups = {
     general = {
@@ -43,10 +29,10 @@ module "eks" {
   }
 
   cluster_addons = {
-    vpc-cni            = { most_recent = true }
-    coredns            = { most_recent = true }
-    kube-proxy         = { most_recent = true }
-    aws-ebs-csi-driver = { most_recent = true }
+    vpc-cni    = { most_recent = true }
+    coredns    = { most_recent = true }
+    kube-proxy = { most_recent = true }
+    # aws-ebs-csi-driver requires IRSA in K8s 1.34+, omitted for basic example
   }
 
   enable_cluster_creator_admin_permissions = true

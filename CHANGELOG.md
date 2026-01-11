@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2026-01-11
+
+### ⚠️ BREAKING CHANGES
+
+#### Self-Managed Node Groups Removed
+- **Removed** `modules/self-managed-node-group/` module
+- **Removed** `examples/self-managed-nodes/` example
+- **Removed** `self_managed_node_groups` variable from main module
+- **Removed** all self-managed node group outputs
+
+**Migration Path:**
+- Use **Managed Node Groups** (`managed_node_groups`) for EC2-based nodes
+- Use **Fargate Profiles** (`fargate_profiles`) for serverless compute
+- Use **EKS Auto Mode** (`enable_auto_mode = true`) for fully managed infrastructure
+
+**Rationale:**
+Self-managed node groups (Auto Scaling Groups) required complex configuration including:
+- Manual aws-auth ConfigMap or access entry management
+- Custom user-data scripts (bootstrap.sh for AL2 or nodeadm for AL2023)
+- Amazon Linux version compatibility issues (AL2023 incompatible with bootstrap.sh)
+- Additional maintenance overhead compared to managed alternatives
+
+AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
+- Simplified node lifecycle management
+- Automatic AMI compatibility and updates
+- Built-in IAM integration without manual configuration
+- Lower operational overhead
+
 ## [2.1.1] - 2026-01-07
 
 ### 🔧 IMPROVEMENTS

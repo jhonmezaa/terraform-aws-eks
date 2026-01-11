@@ -62,13 +62,17 @@ resource "aws_launch_template" "this" {
     )
   }
 
-  user_data = base64encode(local.user_data)
+  user_data = local.has_custom_user_data ? base64encode(local.user_data) : null
 
   tags = var.tags
 }
 
 locals {
-  user_data = templatefile("${path.module}/templates/user-data.sh.tpl", {
+  # Only include user_data if there are custom scripts
+  # Otherwise, let EKS handle the bootstrap automatically
+  has_custom_user_data = var.pre_bootstrap_user_data != "" || var.post_bootstrap_user_data != "" || var.bootstrap_extra_args != "" || var.kubelet_extra_args != ""
+
+  user_data = local.has_custom_user_data ? templatefile("${path.module}/templates/user-data.sh.tpl", {
     cluster_name             = var.cluster_name
     cluster_endpoint         = var.cluster_endpoint
     cluster_ca_data          = var.cluster_certificate_authority_data
@@ -76,5 +80,5 @@ locals {
     post_bootstrap_user_data = var.post_bootstrap_user_data
     bootstrap_extra_args     = var.bootstrap_extra_args
     kubelet_extra_args       = var.kubelet_extra_args
-  })
+  }) : ""
 }

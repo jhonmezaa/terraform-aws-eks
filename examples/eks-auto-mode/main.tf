@@ -19,8 +19,8 @@ module "eks" {
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
 
   # EKS Auto Mode Configuration
-  enable_auto_mode      = true
-  auto_mode_node_pools  = ["general-purpose"]
+  enable_auto_mode     = true
+  auto_mode_node_pools = ["general-purpose"]
 
   # Enable IRSA
   enable_irsa = true

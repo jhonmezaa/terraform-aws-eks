@@ -78,7 +78,7 @@ variable "instance_types" {
 variable "ami_type" {
   description = "AMI type for the node group"
   type        = string
-  default     = "AL2_x86_64"
+  default     = "AL2023_x86_64_STANDARD"
 
   validation {
     condition = contains([
