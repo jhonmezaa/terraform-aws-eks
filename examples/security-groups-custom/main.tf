@@ -31,11 +31,11 @@ resource "aws_security_group" "node" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "Allow nodes to communicate with each other"
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    self            = true
+    description = "Allow nodes to communicate with each other"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
   }
 
   ingress {

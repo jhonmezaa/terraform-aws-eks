@@ -50,7 +50,7 @@ module "eks" {
       min_size       = 2
       max_size       = 6
       instance_types = [var.node_instance_type] # Must be available on Outpost
-      capacity_type  = "ON_DEMAND"               # Spot not available on Outposts
+      capacity_type  = "ON_DEMAND"              # Spot not available on Outposts
 
       # Ensure nodes are on Outpost subnets
       subnet_ids = var.outpost_subnet_ids
@@ -63,9 +63,9 @@ module "eks" {
       block_device_mappings = [{
         device_name = "/dev/xvda"
         ebs = {
-          volume_size = 100
-          volume_type = "gp2" # Check Outpost supported volume types
-          encrypted   = true
+          volume_size           = 100
+          volume_type           = "gp2" # Check Outpost supported volume types
+          encrypted             = true
           delete_on_termination = true
         }
       }]
@@ -97,9 +97,9 @@ module "eks" {
       block_device_mappings = [{
         device_name = "/dev/xvda"
         ebs = {
-          volume_size = 80
-          volume_type = "gp2"
-          encrypted   = true
+          volume_size           = 80
+          volume_type           = "gp2"
+          encrypted             = true
           delete_on_termination = true
         }
       }]

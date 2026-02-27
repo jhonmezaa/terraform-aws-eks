@@ -146,9 +146,9 @@ module "eks" {
   tags = merge(
     var.tags,
     {
-      UpgradePolicy      = var.upgrade_support_type
-      KubernetesVersion  = var.cluster_version
-      SupportEndDate     = var.support_end_date
+      UpgradePolicy     = var.upgrade_support_type
+      KubernetesVersion = var.cluster_version
+      SupportEndDate    = var.support_end_date
     }
   )
 }

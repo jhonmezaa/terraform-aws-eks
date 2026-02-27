@@ -1,5 +1,11 @@
 # Changelog
 
+## [v3.0.1] - 2026-02-27
+
+### Changed
+- Standardize Terraform `required_version` to `~> 1.0` across module and examples
+
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -428,4 +434,3 @@ fargate_profiles = {
 - Karpenter integration with node labels
 - Basic security configurations
 - CloudWatch integration for cluster monitoring
-
