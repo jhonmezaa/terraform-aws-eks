@@ -18,7 +18,7 @@ module "eks" {
   subnet_ids      = var.subnet_ids
 
   # IPv6 Configuration
-  cluster_ip_family        = "ipv6"
+  cluster_ip_family         = "ipv6"
   cluster_service_ipv6_cidr = var.cluster_service_ipv6_cidr # e.g., "fd00::/108"
 
   # IRSA (IAM Roles for Service Accounts)
@@ -34,8 +34,8 @@ module "eks" {
       capacity_type  = "ON_DEMAND"
 
       labels = {
-        workload    = "general"
-        ip-family   = "ipv6"
+        workload  = "general"
+        ip-family = "ipv6"
       }
 
       block_device_mappings = [{
@@ -61,11 +61,11 @@ module "eks" {
       configuration_values = jsonencode({
         env = {
           # Enable IPv6 in VPC-CNI
-          ENABLE_IPv6                 = "true"
-          ENABLE_PREFIX_DELEGATION    = "true"
-          ENABLE_POD_ENI              = "false"
-          WARM_IP_TARGET              = "3"
-          MINIMUM_IP_TARGET           = "2"
+          ENABLE_IPv6              = "true"
+          ENABLE_PREFIX_DELEGATION = "true"
+          ENABLE_POD_ENI           = "false"
+          WARM_IP_TARGET           = "3"
+          MINIMUM_IP_TARGET        = "2"
         }
       })
     }

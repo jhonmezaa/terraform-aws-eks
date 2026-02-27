@@ -110,10 +110,10 @@ output "karpenter_helm_values" {
       }
     }
     settings = {
-      clusterName             = module.eks.cluster_name
-      clusterEndpoint         = module.eks.cluster_endpoint
-      interruptionQueue       = aws_sqs_queue.karpenter_interruption.name
-      defaultInstanceProfile  = module.eks.node_iam_role_name
+      clusterName            = module.eks.cluster_name
+      clusterEndpoint        = module.eks.cluster_endpoint
+      interruptionQueue      = aws_sqs_queue.karpenter_interruption.name
+      defaultInstanceProfile = module.eks.node_iam_role_name
     }
     tolerations = [{
       key      = "CriticalAddonsOnly"

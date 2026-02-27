@@ -31,7 +31,7 @@ module "eks" {
       capacity_type  = "ON_DEMAND"
 
       # Enable remote access with EC2 key pair
-      key_name                 = var.ec2_key_pair_name
+      key_name                  = var.ec2_key_pair_name
       source_security_group_ids = var.ssh_source_security_groups
 
       labels = {

@@ -86,7 +86,7 @@ module "eks" {
   subnet_ids      = var.subnet_ids
 
   # Use external multi-region KMS key
-  create_kms_key                       = false
+  create_kms_key                        = false
   cluster_encryption_config_kms_key_arn = aws_kms_key.eks_multi_region.arn
   cluster_encryption_config_resources   = ["secrets"]
 
@@ -111,10 +111,10 @@ module "eks" {
       block_device_mappings = [{
         device_name = "/dev/xvda"
         ebs = {
-          volume_size = 100
-          volume_type = "gp3"
-          encrypted   = true
-          kms_key_id  = aws_kms_key.eks_multi_region.arn
+          volume_size           = 100
+          volume_type           = "gp3"
+          encrypted             = true
+          kms_key_id            = aws_kms_key.eks_multi_region.arn
           delete_on_termination = true
         }
       }]

@@ -217,12 +217,12 @@ module "eks" {
   cluster_addons = {
     # Phase 1: Deploy before nodes
     vpc-cni = {
-      before_compute       = true
-      most_recent          = true
+      before_compute = true
+      most_recent    = true
       configuration_values = jsonencode({
         env = {
-          ENABLE_PREFIX_DELEGATION = "true"
-          ENABLE_POD_ENI           = "true"
+          ENABLE_PREFIX_DELEGATION          = "true"
+          ENABLE_POD_ENI                    = "true"
           POD_SECURITY_GROUP_ENFORCING_MODE = "standard"
         }
       })
@@ -235,8 +235,8 @@ module "eks" {
 
     # Phase 2: Deploy after nodes
     coredns = {
-      before_compute       = false
-      most_recent          = true
+      before_compute = false
+      most_recent    = true
       configuration_values = jsonencode({
         replicaCount = 2
         resources = {
