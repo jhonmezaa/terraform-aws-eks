@@ -3,8 +3,8 @@
 ## [v3.0.1] - 2026-02-27
 
 ### Changed
-- Standardize Terraform `required_version` to `~> 1.0` across module and examples
 
+- Standardize Terraform `required_version` to `~> 1.0` across module and examples
 
 All notable changes to this project will be documented in this file.
 
@@ -16,24 +16,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ⚠️ BREAKING CHANGES
 
 #### Self-Managed Node Groups Removed
+
 - **Removed** `modules/self-managed-node-group/` module
 - **Removed** `examples/self-managed-nodes/` example
 - **Removed** `self_managed_node_groups` variable from main module
 - **Removed** all self-managed node group outputs
 
 **Migration Path:**
+
 - Use **Managed Node Groups** (`managed_node_groups`) for EC2-based nodes
 - Use **Fargate Profiles** (`fargate_profiles`) for serverless compute
 - Use **EKS Auto Mode** (`enable_auto_mode = true`) for fully managed infrastructure
 
 **Rationale:**
 Self-managed node groups (Auto Scaling Groups) required complex configuration including:
+
 - Manual aws-auth ConfigMap or access entry management
 - Custom user-data scripts (bootstrap.sh for AL2 or nodeadm for AL2023)
 - Amazon Linux version compatibility issues (AL2023 incompatible with bootstrap.sh)
 - Additional maintenance overhead compared to managed alternatives
 
 AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
+
 - Simplified node lifecycle management
 - Automatic AMI compatibility and updates
 - Built-in IAM integration without manual configuration
@@ -44,6 +48,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 ### 🔧 IMPROVEMENTS
 
 #### Provider Version Requirements
+
 - **Updated AWS Provider constraint** from `>= 5.79` to `~> 6.0`
   - Uses pessimistic version constraint for better version management
   - Allows minor and patch updates within 6.x (6.0 - 6.999)
@@ -52,6 +57,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 - **Updated TLS Provider** to `~> 3.0` for consistency
 
 #### Benefits of ~> Constraint
+
 - ✅ Automatic minor/patch updates (security and features)
 - ✅ Protection against breaking changes (major versions)
 - ✅ Consistent versioning across module and examples
@@ -62,6 +68,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 ### ✨ NEW FEATURES
 
 #### EKS Auto Mode Support
+
 - **EKS Auto Mode** - Fully managed compute infrastructure
   - Automatic node provisioning and scaling based on pod requirements
   - AWS-managed patching and updates (max 21-day instance lifetime)
@@ -72,6 +79,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
   - Requires Kubernetes >= 1.31 and AWS Provider >= 5.79
 
 #### Auto Mode IAM Policies
+
 - Automatic attachment of required IAM policies when Auto Mode is enabled:
   - `AmazonEKSComputePolicy` - Compute management
   - `AmazonEKSBlockStoragePolicy` - EBS volume management
@@ -79,16 +87,19 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
   - `AmazonEKSNetworkingPolicy` - VPC networking
 
 #### Variables
+
 - `enable_auto_mode` - Enable/disable Auto Mode (default: `false`)
 - `auto_mode_node_pools` - List of node pools (default: `["general-purpose"]`)
 - `auto_mode_node_role_arn` - Custom IAM role for Auto Mode nodes (optional)
 
 #### Outputs
+
 - `auto_mode_enabled` - Auto Mode status
 - `auto_mode_node_pools` - Configured node pools
 - `auto_mode_node_role_arn` - IAM role ARN for Auto Mode nodes
 
 #### Examples
+
 - **eks-auto-mode** - Complete example with Auto Mode
   - Fully managed compute with zero node configuration
   - IRSA enabled for service accounts
@@ -100,9 +111,11 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 ### 🔧 IMPROVEMENTS
 
 #### Provider Requirements
+
 - Updated AWS provider minimum version to >= 5.79 (required for Auto Mode)
 
 #### Documentation
+
 - Comprehensive Auto Mode example README
 - Architecture diagrams and cost comparisons
 - Auto Mode vs Traditional Node Groups comparison table
@@ -111,12 +124,14 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 ### 📝 NOTES
 
 **Auto Mode Limitations:**
+
 - No SSH/SSM access to EC2 instances (managed by AWS)
 - Custom AMIs not supported (uses AWS-optimized images)
 - Additional cost: ~12% of EC2 instance costs
 - Kubernetes version must be >= 1.31
 
 **When to Use Auto Mode:**
+
 - ✅ Simplified operations and reduced overhead
 - ✅ Automatic scaling based on pod requirements
 - ✅ No manual patching required
@@ -129,17 +144,20 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 ### 🚨 BREAKING CHANGES
 
 #### Module Architecture
+
 - **Complete refactor to modular architecture** with submodules for better organization and reusability
 - **Removed numbered files** (1-eks.tf through 9-addons.tf) and replaced with descriptive names
 - **New file organization**: 0-data.tf, 0-locals.tf, 0-versions.tf, 1-cluster.tf, 2-security-groups.tf, etc.
 
 #### Variable Changes
+
 - `node_groups` → `managed_node_groups` (more explicit naming)
 - Removed `subnet_ids` from root level (now part of cluster configuration)
 - Restructured node group configuration schema
 - New security group variables (breaking: no longer user-provided by default)
 
 #### Output Changes
+
 - `eks_name` → `cluster_name` (backwards compatible alias provided)
 - `eks_cluster_endpoint` → `cluster_endpoint` (backwards compatible alias provided)
 - `openid_connect_arn` → `oidc_provider_arn` (backwards compatible alias provided)
@@ -148,17 +166,20 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 - `eks_region` → `cluster_region` (backwards compatible alias provided)
 
 #### Security Groups
+
 - **Breaking**: Security groups now created automatically by module (previously user-provided)
 - Can opt-out with `create_cluster_security_group = false` and `create_node_security_group = false`
 - Additional rules can be added via `cluster_security_group_additional_rules` and `node_security_group_additional_rules`
 
 #### IRSA (IAM Roles for Service Accounts)
+
 - IRSA remains enabled by default but with enhanced configuration options
 - OIDC provider now supports additional audiences
 
 ### ✨ NEW FEATURES
 
 #### Security & Access Control
+
 - **Access Entries** (Modern IAM) - Replaces aws-auth ConfigMap pattern
   - Support for access policy associations
   - Cluster creator admin permissions (optional)
@@ -181,6 +202,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
   - Automatic key policy for EKS and CloudWatch Logs
 
 #### Logging & Monitoring
+
 - **Control Plane Logging** - Complete CloudWatch integration
   - Support for all 5 log types: api, audit, authenticator, controllerManager, scheduler
   - Configurable log retention (default: 90 days)
@@ -188,6 +210,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
   - Log class support (STANDARD / INFREQUENT_ACCESS)
 
 #### Compute Options
+
 - **Managed Node Groups** (Enhanced)
   - Moved to dedicated submodule (`modules/managed-node-group/`)
   - Custom launch templates with full EBS configuration
@@ -225,6 +248,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
   - Alias creation
 
 #### Network Features
+
 - **IPv6 Support** - Full dual-stack networking
   - Cluster IP family configuration (ipv4 / ipv6)
   - IPv4 and IPv6 service CIDR support
@@ -240,6 +264,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
   - Control plane placement options
 
 #### Operational Excellence
+
 - **Cluster Access Configuration**
   - Authentication modes: API, CONFIG_MAP, API_AND_CONFIG_MAP
   - Bootstrap cluster creator permissions (optional)
@@ -258,11 +283,13 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 ### 🔧 IMPROVEMENTS
 
 #### Code Quality
+
 - **Terraform Validation** - Module passes `terraform validate` with zero warnings
 - **Provider Updates** - Updated to AWS provider >= 5.0, TLS provider >= 3.0
 - **Deprecated Attributes** - Removed all deprecated AWS provider attributes
 
 #### Documentation
+
 - **Expanded Outputs** - 60+ outputs covering all resources and submodules
 - **Variable Validation** - Input validation for critical variables
 - **Comprehensive Examples** - 8 production-ready examples
@@ -276,6 +303,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
   - karpenter-ready
 
 #### Addon Management
+
 - **Two-Phase Deployment** - Enhanced addon ordering
   - Phase 1 (before_compute): vpc-cni, pod-identity-agent
   - Phase 2 (after_compute): coredns, kube-proxy, ebs-csi-driver
@@ -283,6 +311,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 - **Pod Identity Associations** - Support for addon-specific IRSA configurations
 
 #### Karpenter Integration
+
 - **Enhanced Karpenter Support**
   - Shared node IAM role for Karpenter-managed nodes
   - Automatic `karpenter.sh/controller: true` labels
@@ -302,20 +331,24 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 New modular architecture with 4 dedicated submodules:
 
 #### `modules/managed-node-group/`
+
 - EKS managed node groups with launch templates
 - Files: main.tf, launch-template.tf, iam.tf, variables.tf, outputs.tf, versions.tf
 - Template: templates/user-data.sh.tpl
 
 #### `modules/self-managed-node-group/`
+
 - Auto Scaling Groups with full control
 - Files: main.tf, launch-template.tf, iam.tf, variables.tf, outputs.tf, versions.tf
 - Template: templates/user-data.sh.tpl
 
 #### `modules/fargate-profile/`
+
 - Fargate profiles for serverless containers
 - Files: main.tf, iam.tf, variables.tf, outputs.tf, versions.tf
 
 #### `modules/kms/`
+
 - KMS key management (optional)
 - Files: main.tf, variables.tf, outputs.tf, versions.tf
 
@@ -324,6 +357,7 @@ New modular architecture with 4 dedicated submodules:
 #### From v1.x to v2.0.0
 
 **1. Update module source** (if using remote source):
+
 ```hcl
 module "eks" {
   source = "github.com/user/terraform-aws-eks//eks?ref=v2.0.0"
@@ -332,6 +366,7 @@ module "eks" {
 ```
 
 **2. Rename variables**:
+
 ```hcl
 # Before (v1.x)
 node_groups = { ... }
@@ -341,6 +376,7 @@ managed_node_groups = { ... }
 ```
 
 **3. Security groups** (BREAKING):
+
 ```hcl
 # v1.x: User provided security groups
 vpc_security_group_ids = [aws_security_group.cluster.id]
@@ -357,6 +393,7 @@ node_additional_security_group_ids    = [aws_security_group.node.id]
 ```
 
 **4. Update outputs**:
+
 ```hcl
 # Before (v1.x)
 output "cluster" {
@@ -370,6 +407,7 @@ output "cluster" {
 ```
 
 **5. Optional: Enable new features**:
+
 ```hcl
 # Access Entries (replaces aws-auth ConfigMap)
 access_entries = {
