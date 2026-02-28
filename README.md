@@ -5,6 +5,7 @@ Production-ready Terraform module for deploying Amazon Elastic Kubernetes Servic
 ## Features
 
 ### Cluster Management
+
 - **EKS Cluster**: Kubernetes versions 1.21 - 1.34 supported
 - **EKS Auto Mode**: Fully managed compute infrastructure (AWS-managed nodes and storage)
 - **Flexible Networking**: Public, private, or hybrid endpoint configurations
@@ -12,6 +13,7 @@ Production-ready Terraform module for deploying Amazon Elastic Kubernetes Servic
 - **Outpost Support**: EKS on AWS Outposts for edge deployments
 
 ### Compute Options
+
 - **Managed Node Groups**: EC2-based worker nodes with custom launch templates
 - **Fargate Profiles**: Serverless compute for Kubernetes workloads
 - **Multi-Architecture**: x86_64 and ARM64 (Graviton) support
@@ -19,6 +21,7 @@ Production-ready Terraform module for deploying Amazon Elastic Kubernetes Servic
 - **Mixed Compute**: Combine managed nodes and Fargate in single cluster
 
 ### Security & IAM
+
 - **IRSA (IAM Roles for Service Accounts)**: OIDC provider for fine-grained permissions
 - **Access Entries**: Modern IAM authentication (replaces aws-auth ConfigMap)
 - **KMS Encryption**: Cluster secrets encryption with AWS KMS
@@ -26,12 +29,14 @@ Production-ready Terraform module for deploying Amazon Elastic Kubernetes Servic
 - **CloudWatch Logging**: Complete control plane audit logs
 
 ### Add-on Management
+
 - **Two-Phase Deployment**: Intelligent addon ordering (before/after compute)
 - **Version Management**: Automatic latest version resolution or pinning
 - **Configuration Overrides**: JSON-based addon customization
 - **Built-in Addons**: vpc-cni, CoreDNS, kube-proxy, EBS CSI Driver, Pod Identity Agent
 
 ### Advanced Features
+
 - **Karpenter Ready**: Pre-configured for Karpenter autoscaling
 - **Upgrade Policy**: STANDARD (14 months) or EXTENDED (26 months) support
 - **SSH Remote Access**: Optional SSH access to worker nodes
@@ -40,11 +45,11 @@ Production-ready Terraform module for deploying Amazon Elastic Kubernetes Servic
 
 ## Requirements
 
-| Name | Version |
-|------|---------|
-| terraform | >= 1.3 |
-| aws | ~> 6.0 |
-| tls | ~> 3.0 |
+| Name      | Version |
+| --------- | ------- |
+| terraform | >= 1.3  |
+| aws       | ~> 6.0  |
+| tls       | ~> 3.0  |
 
 ## Usage
 
@@ -86,6 +91,7 @@ module "eks" {
 ### Complete Example
 
 See [examples/complete](./examples/complete) for a full-featured configuration including:
+
 - Multiple node groups (on-demand, spot, ARM)
 - Fargate profiles for serverless workloads
 - CloudWatch logging
@@ -104,6 +110,7 @@ Clusters are automatically named following this pattern:
 **Example**: `ause1-eks-cluster-prod-myapp` (us-east-1, account: prod, project: myapp)
 
 **Region Prefix Mapping**:
+
 - `us-east-1` → `ause1`
 - `us-west-2` → `usw2`
 - `eu-west-1` → `euw1`
@@ -115,104 +122,104 @@ Override with `cluster_name` variable if needed.
 
 ### Required Variables
 
-| Name | Description | Type |
-|------|-------------|------|
-| `account_name` | Account name for resource naming | `string` |
-| `project_name` | Project name for resource naming | `string` |
-| `cluster_version` | Kubernetes version (e.g., "1.34") | `string` |
-| `vpc_id` | VPC ID where cluster will be deployed | `string` |
-| `subnet_ids` | List of subnet IDs (minimum 2 AZs) | `list(string)` |
+| Name              | Description                           | Type           |
+| ----------------- | ------------------------------------- | -------------- |
+| `account_name`    | Account name for resource naming      | `string`       |
+| `project_name`    | Project name for resource naming      | `string`       |
+| `cluster_version` | Kubernetes version (e.g., "1.34")     | `string`       |
+| `vpc_id`          | VPC ID where cluster will be deployed | `string`       |
+| `subnet_ids`      | List of subnet IDs (minimum 2 AZs)    | `list(string)` |
 
 ### Cluster Configuration
 
-| Name | Description | Type | Default |
-|------|-------------|------|---------|
-| `cluster_name` | Override auto-generated cluster name | `string` | `null` |
-| `cluster_endpoint_private_access` | Enable private API endpoint | `bool` | `false` |
-| `cluster_endpoint_public_access` | Enable public API endpoint | `bool` | `true` |
+| Name                                   | Description                             | Type           | Default         |
+| -------------------------------------- | --------------------------------------- | -------------- | --------------- |
+| `cluster_name`                         | Override auto-generated cluster name    | `string`       | `null`          |
+| `cluster_endpoint_private_access`      | Enable private API endpoint             | `bool`         | `false`         |
+| `cluster_endpoint_public_access`       | Enable public API endpoint              | `bool`         | `true`          |
 | `cluster_endpoint_public_access_cidrs` | CIDRs allowed to access public endpoint | `list(string)` | `["0.0.0.0/0"]` |
-| `cluster_ip_family` | IP family (ipv4 or ipv6) | `string` | `null` |
-| `cluster_upgrade_policy` | Upgrade policy configuration | `object` | `null` |
+| `cluster_ip_family`                    | IP family (ipv4 or ipv6)                | `string`       | `null`          |
+| `cluster_upgrade_policy`               | Upgrade policy configuration            | `object`       | `null`          |
 
 ### Logging & Encryption
 
-| Name | Description | Type | Default |
-|------|-------------|------|---------|
-| `enabled_cluster_log_types` | Control plane logs to enable | `list(string)` | `[]` |
-| `cloudwatch_log_group_retention_in_days` | Log retention period | `number` | `90` |
-| `create_kms_key` | Create KMS key for encryption | `bool` | `false` |
-| `kms_key_enable_key_rotation` | Enable automatic key rotation | `bool` | `true` |
+| Name                                     | Description                   | Type           | Default |
+| ---------------------------------------- | ----------------------------- | -------------- | ------- |
+| `enabled_cluster_log_types`              | Control plane logs to enable  | `list(string)` | `[]`    |
+| `cloudwatch_log_group_retention_in_days` | Log retention period          | `number`       | `90`    |
+| `create_kms_key`                         | Create KMS key for encryption | `bool`         | `false` |
+| `kms_key_enable_key_rotation`            | Enable automatic key rotation | `bool`         | `true`  |
 
 ### Compute Configuration
 
-| Name | Description | Type | Default |
-|------|-------------|------|---------|
-| `managed_node_groups` | Map of managed node group configs | `map(any)` | `{}` |
-| `fargate_profiles` | Map of Fargate profile configs | `map(any)` | `{}` |
-| `enable_auto_mode` | Enable EKS Auto Mode | `bool` | `false` |
-| `enable_karpenter` | Add Karpenter labels to nodes | `bool` | `false` |
+| Name                  | Description                       | Type       | Default |
+| --------------------- | --------------------------------- | ---------- | ------- |
+| `managed_node_groups` | Map of managed node group configs | `map(any)` | `{}`    |
+| `fargate_profiles`    | Map of Fargate profile configs    | `map(any)` | `{}`    |
+| `enable_auto_mode`    | Enable EKS Auto Mode              | `bool`     | `false` |
+| `enable_karpenter`    | Add Karpenter labels to nodes     | `bool`     | `false` |
 
 ### IAM & Security
 
-| Name | Description | Type | Default |
-|------|-------------|------|---------|
-| `enable_irsa` | Enable OIDC provider for IRSA | `bool` | `true` |
-| `access_entries` | Map of IAM access entries | `map(object)` | `{}` |
-| `enable_cluster_creator_admin_permissions` | Grant admin to cluster creator | `bool` | `true` |
-| `create_cluster_security_group` | Create cluster security group | `bool` | `true` |
-| `create_node_security_group` | Create node security group | `bool` | `true` |
+| Name                                       | Description                    | Type          | Default |
+| ------------------------------------------ | ------------------------------ | ------------- | ------- |
+| `enable_irsa`                              | Enable OIDC provider for IRSA  | `bool`        | `true`  |
+| `access_entries`                           | Map of IAM access entries      | `map(object)` | `{}`    |
+| `enable_cluster_creator_admin_permissions` | Grant admin to cluster creator | `bool`        | `true`  |
+| `create_cluster_security_group`            | Create cluster security group  | `bool`        | `true`  |
+| `create_node_security_group`               | Create node security group     | `bool`        | `true`  |
 
 ### Add-ons
 
-| Name | Description | Type | Default |
-|------|-------------|------|---------|
-| `cluster_addons` | Map of EKS addon configurations | `map(object)` | `null` |
+| Name             | Description                     | Type          | Default |
+| ---------------- | ------------------------------- | ------------- | ------- |
+| `cluster_addons` | Map of EKS addon configurations | `map(object)` | `null`  |
 
 ## Outputs
 
 ### Cluster Information
 
-| Name | Description |
-|------|-------------|
-| `cluster_name` | EKS cluster name |
-| `cluster_endpoint` | Kubernetes API endpoint |
-| `cluster_version` | Kubernetes version |
-| `cluster_arn` | Cluster ARN |
-| `cluster_certificate_authority_data` | Base64 CA certificate |
+| Name                                 | Description             |
+| ------------------------------------ | ----------------------- |
+| `cluster_name`                       | EKS cluster name        |
+| `cluster_endpoint`                   | Kubernetes API endpoint |
+| `cluster_version`                    | Kubernetes version      |
+| `cluster_arn`                        | Cluster ARN             |
+| `cluster_certificate_authority_data` | Base64 CA certificate   |
 
 ### IAM & Security
 
-| Name | Description |
-|------|-------------|
-| `oidc_provider_arn` | OIDC provider ARN for IRSA |
-| `cluster_iam_role_arn` | Cluster IAM role ARN |
-| `node_iam_role_arn` | Shared node IAM role ARN (for Karpenter) |
-| `cluster_security_group_id` | Cluster security group ID |
-| `node_security_group_id` | Node security group ID |
+| Name                        | Description                              |
+| --------------------------- | ---------------------------------------- |
+| `oidc_provider_arn`         | OIDC provider ARN for IRSA               |
+| `cluster_iam_role_arn`      | Cluster IAM role ARN                     |
+| `node_iam_role_arn`         | Shared node IAM role ARN (for Karpenter) |
+| `cluster_security_group_id` | Cluster security group ID                |
+| `node_security_group_id`    | Node security group ID                   |
 
 ### Node Groups & Fargate
 
-| Name | Description |
-|------|-------------|
-| `managed_node_group_ids` | Map of node group IDs |
-| `managed_node_group_arns` | Map of node group ARNs |
-| `managed_node_group_statuses` | Map of node group statuses |
-| `fargate_profile_ids` | Map of Fargate profile IDs |
-| `fargate_profile_arns` | Map of Fargate profile ARNs |
+| Name                          | Description                 |
+| ----------------------------- | --------------------------- |
+| `managed_node_group_ids`      | Map of node group IDs       |
+| `managed_node_group_arns`     | Map of node group ARNs      |
+| `managed_node_group_statuses` | Map of node group statuses  |
+| `fargate_profile_ids`         | Map of Fargate profile IDs  |
+| `fargate_profile_arns`        | Map of Fargate profile ARNs |
 
 ### Add-ons
 
-| Name | Description |
-|------|-------------|
-| `cluster_addons` | Map of all addon resources |
+| Name                     | Description                    |
+| ------------------------ | ------------------------------ |
+| `cluster_addons`         | Map of all addon resources     |
 | `cluster_addon_versions` | Map of deployed addon versions |
 
 ### Encryption & Logging
 
-| Name | Description |
-|------|-------------|
-| `kms_key_arn` | KMS key ARN for encryption |
-| `cloudwatch_log_group_name` | CloudWatch log group name |
+| Name                        | Description                |
+| --------------------------- | -------------------------- |
+| `kms_key_arn`               | KMS key ARN for encryption |
+| `cloudwatch_log_group_name` | CloudWatch log group name  |
 
 ## Managed Node Groups Configuration
 
@@ -371,6 +378,7 @@ module "eks" {
 ```
 
 **Benefits**:
+
 - AWS manages node provisioning and scaling
 - Automatic node health monitoring and replacement
 - No need to manage node groups or Fargate profiles
@@ -383,11 +391,13 @@ module "eks" {
 The following examples have been validated with Kubernetes 1.34:
 
 ### ✅ Complete Example
+
 **Path**: `examples/complete`
 
 Full-featured cluster with managed nodes and Fargate profiles.
 
 **Features**:
+
 - 3 managed node groups (general, spot, arm)
 - 2 Fargate profiles (kube-system, serverless)
 - CloudWatch logging (all control plane types)
@@ -399,11 +409,13 @@ Full-featured cluster with managed nodes and Fargate profiles.
 **Deploy time**: ~20 minutes
 
 ### ✅ Private Cluster
+
 **Path**: `examples/private-cluster`
 
 Fully private cluster with no public endpoint access.
 
 **Features**:
+
 - Private API endpoint only
 - VPC endpoints (S3, ECR API, ECR DKR)
 - Route table configuration for gateway endpoints
@@ -417,11 +429,13 @@ Fully private cluster with no public endpoint access.
 **Note**: Requires VPN/Direct Connect or bastion host for kubectl access.
 
 ### ✅ Security Groups Custom
+
 **Path**: `examples/security-groups-custom`
 
 Cluster with custom security groups instead of module-generated.
 
 **Features**:
+
 - Custom cluster security group
 - Custom node security group
 - Explicit ingress/egress rules
@@ -433,11 +447,13 @@ Cluster with custom security groups instead of module-generated.
 **Use case**: Pre-existing security group requirements or strict network policies.
 
 ### ✅ Upgrade Policy
+
 **Path**: `examples/upgrade-policy`
 
 Cluster with upgrade policies and CloudWatch monitoring.
 
 **Features**:
+
 - STANDARD support type (14 months)
 - Support end date configuration
 - 2 node groups (primary: 3 nodes, secondary: 2 nodes)
@@ -496,6 +512,7 @@ All resources follow a consistent naming pattern:
 ```
 
 **Examples**:
+
 - Cluster: `ause1-eks-cluster-prod-myapp`
 - Node IAM Role: `ause1-role-eks-node-prod-myapp`
 - Security Group: `ause1-sg-eks-cluster-prod-myapp`
@@ -606,6 +623,7 @@ Terraform will create the OIDC provider without recreating the cluster.
 **Cause**: No worker nodes available.
 
 **Solution**:
+
 ```bash
 # Check node groups
 kubectl get nodes
@@ -626,6 +644,7 @@ aws autoscaling describe-scaling-activities \
 **Cause**: Missing access entry or RBAC permissions.
 
 **Solution**:
+
 ```bash
 # Update kubeconfig
 aws eks update-kubeconfig --name <cluster-name> --region <region>
@@ -645,6 +664,7 @@ Maintained by Jhon Meza
 ## Contributing
 
 Contributions welcome! Please:
+
 1. Fork the repository
 2. Create a feature branch
 3. Submit a pull request with tests
