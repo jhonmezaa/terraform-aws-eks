@@ -21,8 +21,11 @@ locals {
 
   region_prefix = var.region_prefix != null ? var.region_prefix : lookup(local.region_prefix_map, data.aws_region.current.id, "aws")
 
+  # Name prefix: includes region prefix with trailing dash, or empty string
+  name_prefix = var.use_region_prefix ? "${local.region_prefix}-" : ""
+
   # Cluster name
-  cluster_name = var.cluster_name != null ? var.cluster_name : "${local.region_prefix}-eks-cluster-${var.account_name}-${var.project_name}"
+  cluster_name = var.cluster_name != null ? var.cluster_name : "${local.name_prefix}eks-cluster-${var.account_name}-${var.project_name}"
 
   # Security groups
   cluster_security_group_id = var.create_cluster_security_group ? aws_security_group.cluster[0].id : var.cluster_security_group_id

@@ -20,6 +20,12 @@ variable "region_prefix" {
   default     = null
 }
 
+variable "use_region_prefix" {
+  description = "Whether to include the region prefix in resource names. When false, names omit the region prefix."
+  type        = bool
+  default     = true
+}
+
 variable "account_name" {
   description = "Account name for resource naming"
   type        = string
@@ -194,7 +200,7 @@ variable "cluster_iam_role_name" {
 variable "cluster_iam_role_use_name_prefix" {
   description = "Use name prefix for cluster IAM role"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "cluster_iam_role_path" {
@@ -260,7 +266,7 @@ variable "cluster_security_group_name" {
 variable "cluster_security_group_use_name_prefix" {
   description = "Use name prefix for cluster security group"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "cluster_security_group_description" {
@@ -302,7 +308,7 @@ variable "node_security_group_name" {
 variable "node_security_group_use_name_prefix" {
   description = "Use name prefix for node security group"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "node_security_group_description" {
@@ -526,7 +532,7 @@ variable "node_iam_role_name" {
 variable "node_iam_role_use_name_prefix" {
   description = "Use name prefix for node IAM role"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "node_iam_role_path" {
