@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.0.7] - 2026-10-27
+
+### Changed
+
+- Docs: normalize CHANGELOG format (preamble moved to the top, `v`-prefixed version headers)
+- Docs: add missing CHANGELOG entries for v3.0.2 and v3.0.3
+
+### Fixed
+
+- Docs: replace `github.com/your-org/...` placeholder module sources in README with `github.com/jhonmezaa/...` pinned via `?ref=`
+
 ## [v3.0.6] - 2026-10-27
 
 ### Fixed
@@ -31,6 +42,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Update README documentation and CHANGELOG formatting
+
+## [v3.0.3] - 2026-02-28
+
+### Changed
+
+- Update README and CHANGELOG
+
+## [v3.0.2] - 2026-02-28
+
+### Added
+
+- `use_region_prefix` variable and `name_prefix` local for consistent naming convention support
+
+### Changed
+
+- Change defaults of `cluster_iam_role_use_name_prefix`, `node_iam_role_use_name_prefix`, `cluster_security_group_use_name_prefix` and `node_security_group_use_name_prefix` from `true` to `false`, using full names (64-char limit) instead of name prefixes (38-char limit) to avoid IAM role name length failures with longer project names
 
 ## [v3.0.1] - 2026-02-27
 
