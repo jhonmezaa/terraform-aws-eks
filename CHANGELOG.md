@@ -1,5 +1,9 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [v3.0.6] - 2026-10-27
 
@@ -34,12 +38,7 @@
 
 - Standardize Terraform `required_version` to `~> 1.0` across module and examples
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [3.0.0] - 2026-01-11
+## [v3.0.0] - 2026-01-11
 
 ### ⚠️ BREAKING CHANGES
 
@@ -71,7 +70,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 - Built-in IAM integration without manual configuration
 - Lower operational overhead
 
-## [2.1.1] - 2026-01-07
+## [v2.1.1] - 2026-01-07
 
 ### 🔧 IMPROVEMENTS
 
@@ -91,7 +90,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 - ✅ Consistent versioning across module and examples
 - ✅ Better compatibility management
 
-## [2.1.0] - 2026-01-07
+## [v2.1.0] - 2026-01-07
 
 ### ✨ NEW FEATURES
 
@@ -167,7 +166,7 @@ AWS-managed solutions (Managed Node Groups, Fargate, Auto Mode) provide better:
 - ❌ Require custom AMIs or bootstrap scripts
 - ❌ Cost-sensitive deployments (12% overhead)
 
-## [2.0.0] - 2026-01-07
+## [v2.0.0] - 2026-01-07
 
 ### 🚨 BREAKING CHANGES
 
@@ -489,7 +488,7 @@ fargate_profiles = {
 
 ---
 
-## [1.0.0] - 2024-11-14
+## [v1.0.0] - 2024-11-14
 
 ### Initial Release
 
