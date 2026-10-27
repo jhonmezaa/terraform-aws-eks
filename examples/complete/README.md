@@ -67,7 +67,7 @@ This example demonstrates all features of the EKS module v2.0.0, including manag
 - AWS account with appropriate permissions
 - VPC with private subnets in at least 2 AZs
 - IAM roles for DevOps and Developer teams (if using access entries)
-- Terraform >= 1.0
+- Terraform >= 1.3
 - kubectl installed
 
 ## Usage

@@ -66,7 +66,7 @@ This mixed approach is ideal when:
 - AWS account with appropriate permissions
 - VPC with private subnets in at least 2 AZs
 - NAT Gateway for Fargate internet access
-- Terraform >= 1.0
+- Terraform >= 1.3
 - kubectl and AWS CLI
 
 ## Usage
