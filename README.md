@@ -57,7 +57,7 @@ Production-ready Terraform module for deploying Amazon Elastic Kubernetes Servic
 
 ```hcl
 module "eks" {
-  source = "github.com/your-org/terraform-aws-eks//eks"
+  source = "github.com/jhonmezaa/terraform-aws-eks//eks?ref=v3.0.6"
 
   account_name = "prod"
   project_name = "myapp"
@@ -537,7 +537,7 @@ Addons (Phase 2: coredns, kube-proxy, ebs-csi-driver)
 
 ```hcl
 module "vpc" {
-  source = "github.com/your-org/terraform-aws-vpc//vpc"
+  source = "github.com/jhonmezaa/terraform-aws-vpc//vpc?ref=v1.1.2"
 
   account_name   = "prod"
   project_name   = "myapp"
@@ -548,7 +548,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source = "github.com/your-org/terraform-aws-eks//eks"
+  source = "github.com/jhonmezaa/terraform-aws-eks//eks?ref=v3.0.6"
 
   account_name = "prod"
   project_name = "myapp"
@@ -570,7 +570,7 @@ module "eks" {
 
 ```hcl
 module "helm_addons" {
-  source = "github.com/your-org/terraform-aws-eks-helm-addons//helm-addons"
+  source = "github.com/jhonmezaa/terraform-aws-eks-helm-addons//helm-addons?ref=v3.1.3"
 
   account_name         = "prod"
   project_name         = "myapp"
