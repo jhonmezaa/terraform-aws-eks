@@ -1,6 +1,17 @@
 # Changelog
 
 
+## [v3.0.6] - 2026-10-27
+
+### Fixed
+
+- Replace deprecated `data.aws_region.current.id` with `data.aws_region.current.region` in the module (deprecated in AWS provider v6)
+- Replace deprecated `data.aws_region.current.id` / `.name` with `.region` in the `basic-managed-nodes`, `fargate-only`, `multi-region-kms` and `private-cluster` examples
+
+### Changed
+
+- Stop tracking `eks/.terraform.lock.hcl` (lock files are already listed in `.gitignore`)
+
 ## [v3.0.5] - 2026-10-27
 
 ### Changed
