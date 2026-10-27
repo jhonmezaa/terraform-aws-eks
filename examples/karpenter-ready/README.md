@@ -36,7 +36,7 @@ This example demonstrates an EKS cluster optimized for [Karpenter](https://karpe
 
 - AWS account with appropriate permissions
 - VPC with subnets in multiple AZs
-- Terraform >= 1.0
+- Terraform >= 1.3
 - kubectl and Helm installed
 - AWS CLI configured
 

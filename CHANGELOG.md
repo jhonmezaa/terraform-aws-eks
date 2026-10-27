@@ -1,6 +1,16 @@
 # Changelog
 
 
+## [v3.0.5] - 2026-10-27
+
+### Changed
+
+- Use minimum-only version constraints in the reusable modules: AWS provider `~> 6.0` -> `>= 6.0`, TLS provider `~> 3.0` -> `>= 3.0` (root module and `fargate-profile`, `kms`, `managed-node-group` submodules)
+- Set `required_version` to `>= 1.3` (was `~> 1.0`) in the root module and the `fargate-profile` and `managed-node-group` submodules: they use `optional()` object type attributes, introduced in Terraform 1.3
+- Set `required_version` to `>= 1.0` (was `~> 1.0`) in the `kms` submodule: it uses no features newer than Terraform 1.0
+- Example root modules keep pessimistic `~>` constraints (AWS provider `~> 6.0`, Terraform `~> 1.3`)
+- Update requirements in README and example READMEs accordingly
+
 ## [v3.0.4] - 2026-04-25
 
 ### Changed
