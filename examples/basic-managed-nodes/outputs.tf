@@ -7,7 +7,7 @@ output "cluster_endpoint" {
 }
 
 output "configure_kubectl" {
-  value = "aws eks update-kubeconfig --region ${data.aws_region.current.name} --name ${module.eks.cluster_name}"
+  value = "aws eks update-kubeconfig --region ${data.aws_region.current.region} --name ${module.eks.cluster_name}"
 }
 
 data "aws_region" "current" {}

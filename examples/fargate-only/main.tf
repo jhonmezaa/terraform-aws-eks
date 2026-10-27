@@ -139,7 +139,7 @@ resource "null_resource" "patch_coredns_for_fargate" {
 
   provisioner "local-exec" {
     command = <<-EOT
-      aws eks update-kubeconfig --name ${module.eks.cluster_name} --region ${data.aws_region.current.name}
+      aws eks update-kubeconfig --name ${module.eks.cluster_name} --region ${data.aws_region.current.region}
 
       # Remove the eks.amazonaws.com/compute-type annotation from CoreDNS
       kubectl patch deployment coredns \
