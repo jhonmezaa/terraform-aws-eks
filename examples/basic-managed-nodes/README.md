@@ -26,7 +26,7 @@ This example creates:
 
 - AWS account with appropriate permissions
 - VPC with private subnets in at least 2 availability zones
-- Terraform >= 1.0
+- Terraform >= 1.3
 - AWS CLI configured with credentials
 
 ## Usage

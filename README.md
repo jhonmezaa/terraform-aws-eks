@@ -48,8 +48,8 @@ Production-ready Terraform module for deploying Amazon Elastic Kubernetes Servic
 | Name      | Version |
 | --------- | ------- |
 | terraform | >= 1.3  |
-| aws       | ~> 6.0  |
-| tls       | ~> 3.0  |
+| aws       | >= 6.0  |
+| tls       | >= 3.0  |
 
 ## Usage
 

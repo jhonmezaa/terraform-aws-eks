@@ -27,7 +27,7 @@ All pods matching these selectors automatically run on Fargate.
 
 - AWS account with appropriate permissions
 - VPC with **private subnets** and **NAT Gateway**
-- Terraform >= 1.0
+- Terraform >= 1.3
 - kubectl and AWS CLI installed
 
 **Critical**: Fargate requires private subnets with internet access via NAT Gateway. Public subnets will not work.
