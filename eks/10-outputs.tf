@@ -316,12 +316,12 @@ output "cluster_addon_versions" {
 
 output "cluster_region" {
   description = "AWS region where the EKS cluster is deployed"
-  value       = data.aws_region.current.id
+  value       = data.aws_region.current.region
 }
 
 output "cluster_region_id" {
   description = "AWS region ID where the EKS cluster is deployed"
-  value       = data.aws_region.current.id
+  value       = data.aws_region.current.region
 }
 
 ################################################################################
@@ -345,7 +345,7 @@ output "openid_connect_arn" {
 
 output "eks_region" {
   description = "AWS region where the EKS cluster is deployed (alias for cluster_region for backwards compatibility)"
-  value       = data.aws_region.current.id
+  value       = data.aws_region.current.region
 }
 
 ################################################################################
