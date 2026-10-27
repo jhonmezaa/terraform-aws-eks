@@ -61,7 +61,7 @@ resource "aws_kms_key_policy" "this" {
           Condition = {
             StringEquals = {
               "kms:ViaService" = [
-                "eks.${data.aws_region.current.id}.${local.dns_suffix}"
+                "eks.${data.aws_region.current.region}.${local.dns_suffix}"
               ]
             }
           }
@@ -72,7 +72,7 @@ resource "aws_kms_key_policy" "this" {
           Sid    = "Allow CloudWatch Logs to use the key"
           Effect = "Allow"
           Principal = {
-            Service = "logs.${data.aws_region.current.id}.${local.dns_suffix}"
+            Service = "logs.${data.aws_region.current.region}.${local.dns_suffix}"
           }
           Action = [
             "kms:Decrypt",
@@ -83,7 +83,7 @@ resource "aws_kms_key_policy" "this" {
           Resource = "*"
           Condition = {
             ArnLike = {
-              "kms:EncryptionContext:aws:logs:arn" = "arn:${data.aws_partition.current.partition}:logs:${data.aws_region.current.id}:${data.aws_caller_identity.current.account_id}:log-group:${local.cloudwatch_log_group_name}"
+              "kms:EncryptionContext:aws:logs:arn" = "arn:${data.aws_partition.current.partition}:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:${local.cloudwatch_log_group_name}"
             }
           }
         }

@@ -19,7 +19,7 @@ locals {
     "ca-central-1"   = "cac1"
   }
 
-  region_prefix = var.region_prefix != null ? var.region_prefix : lookup(local.region_prefix_map, data.aws_region.current.id, "aws")
+  region_prefix = var.region_prefix != null ? var.region_prefix : lookup(local.region_prefix_map, data.aws_region.current.region, "aws")
 
   # Name prefix: includes region prefix with trailing dash, or empty string
   name_prefix = var.use_region_prefix ? "${local.region_prefix}-" : ""
