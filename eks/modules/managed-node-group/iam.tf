@@ -1,5 +1,5 @@
 resource "aws_iam_role" "this" {
-  count = var.create_iam_role ? 1 : 0
+  count = var.create && var.create_iam_role ? 1 : 0
 
   name_prefix = "${var.node_group_name}-node-"
 
@@ -10,7 +10,7 @@ resource "aws_iam_role" "this" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Service = "ec2.amazonaws.com"
+          Service = "ec2.${data.aws_partition.current.dns_suffix}"
         }
       }
     ]
@@ -25,14 +25,14 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  for_each = var.create_iam_role ? var.iam_role_policies : {}
+  for_each = var.create && var.create_iam_role ? var.iam_role_policies : {}
 
   role       = aws_iam_role.this[0].name
   policy_arn = each.value
 }
 
 resource "aws_iam_role_policy_attachment" "additional" {
-  for_each = var.create_iam_role ? var.iam_role_additional_policies : {}
+  for_each = var.create && var.create_iam_role ? var.iam_role_additional_policies : {}
 
   role       = aws_iam_role.this[0].name
   policy_arn = each.value

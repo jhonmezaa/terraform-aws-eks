@@ -20,6 +20,9 @@ module "eks" {
   # IRSA (IAM Roles for Service Accounts)
   enable_irsa = true
 
+  # Attach the optional SSH security group (CIDR based access) to all nodes
+  node_additional_security_group_ids = var.create_ssh_security_group ? [aws_security_group.ssh_access[0].id] : []
+
   # Managed Node Groups with SSH Access
   managed_node_groups = {
     # Node group with SSH access via EC2 key pair
@@ -30,9 +33,10 @@ module "eks" {
       instance_types = ["t3.large"]
       capacity_type  = "ON_DEMAND"
 
-      # Enable remote access with EC2 key pair
-      key_name                  = var.ec2_key_pair_name
-      source_security_group_ids = var.ssh_source_security_groups
+      # Enable remote access with EC2 key pair (set on the launch template)
+      enable_remote_access                    = true
+      remote_access_ec2_ssh_key               = var.ec2_key_pair_name
+      remote_access_source_security_group_ids = var.ssh_source_security_groups
 
       labels = {
         access-method = "ssh"
@@ -62,7 +66,8 @@ module "eks" {
       capacity_type  = "ON_DEMAND"
 
       # SSH key for emergency access
-      key_name = var.ec2_key_pair_name
+      enable_remote_access      = true
+      remote_access_ec2_ssh_key = var.ec2_key_pair_name
 
       labels = {
         access-method = "ssm"

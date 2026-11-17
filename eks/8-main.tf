@@ -5,7 +5,7 @@
 module "managed_node_group" {
   source = "./modules/managed-node-group"
 
-  for_each = var.create ? var.managed_node_groups : tomap({})
+  for_each = { for k, v in var.managed_node_groups : k => v if var.create }
 
   create = try(each.value.create, true)
 
@@ -21,7 +21,8 @@ module "managed_node_group" {
   desired_size               = try(each.value.desired_size, 3)
   max_size                   = try(each.value.max_size, 5)
   min_size                   = try(each.value.min_size, 1)
-  max_unavailable_percentage = try(each.value.max_unavailable_percentage, 33)
+  max_unavailable_percentage = try(each.value.max_unavailable_percentage, each.value.update_config.max_unavailable_percentage, 33)
+  max_unavailable            = try(each.value.max_unavailable, each.value.update_config.max_unavailable, null)
 
   # Compute
   capacity_type       = try(each.value.capacity_type, "ON_DEMAND")
@@ -77,7 +78,7 @@ module "managed_node_group" {
 module "fargate_profile" {
   source = "./modules/fargate-profile"
 
-  for_each = local.fargate_profiles
+  for_each = { for k, v in local.fargate_profiles : k => v if var.create }
 
   create = try(each.value.create, true)
 
