@@ -57,7 +57,7 @@ Production-ready Terraform module for deploying Amazon Elastic Kubernetes Servic
 
 ```hcl
 module "eks" {
-  source = "github.com/jhonmezaa/terraform-aws-eks//eks?ref=v3.0.6"
+  source = "github.com/jhonmezaa/terraform-aws-eks//eks?ref=v3.1.0"
 
   account_name = "prod"
   project_name = "myapp"
@@ -124,8 +124,8 @@ Override with `cluster_name` variable if needed.
 
 | Name              | Description                           | Type           |
 | ----------------- | ------------------------------------- | -------------- |
-| `account_name`    | Account name for resource naming      | `string`       |
-| `project_name`    | Project name for resource naming      | `string`       |
+| `account_name`    | Account name for resource naming (1-32 chars, `^[a-z0-9-]+$`) | `string`       |
+| `project_name`    | Project name for resource naming (1-32 chars, `^[a-z0-9-]+$`) | `string`       |
 | `cluster_version` | Kubernetes version (e.g., "1.34")     | `string`       |
 | `vpc_id`          | VPC ID where cluster will be deployed | `string`       |
 | `subnet_ids`      | List of subnet IDs (minimum 2 AZs)    | `list(string)` |
@@ -140,6 +140,12 @@ Override with `cluster_name` variable if needed.
 | `cluster_endpoint_public_access_cidrs` | CIDRs allowed to access public endpoint | `list(string)` | `["0.0.0.0/0"]` |
 | `cluster_ip_family`                    | IP family (ipv4 or ipv6)                | `string`       | `null`          |
 | `cluster_upgrade_policy`               | Upgrade policy configuration            | `object`       | `null`          |
+| `cluster_force_update_version`         | Force version updates (`force_update_version`) | `bool`  | `null`          |
+| `cluster_zonal_shift_config`           | ARC zonal shift (`{ enabled = bool }`)  | `object`       | `null`          |
+| `region_prefix`                        | Override the region prefix used in names | `string`      | `null`          |
+| `use_region_prefix`                    | Include the region prefix in names      | `bool`         | `true`          |
+| `tags_common`                          | Common tags merged into every resource  | `map(string)`  | `{}`            |
+| `tags`                                 | Tags applied to all resources           | `map(string)`  | `{}`            |
 
 ### Logging & Encryption
 
@@ -267,13 +273,33 @@ managed_node_groups = {
     metadata_options_http_tokens                 = "required"
     metadata_options_http_put_response_hop_limit = 2
 
-    # Update configuration
+    # Update configuration (or the flat keys max_unavailable_percentage / max_unavailable)
     update_config = {
-      max_unavailable_percentage = 33
+      max_unavailable_percentage = 33 # or max_unavailable = 1
     }
+
+    # SSH access (key pair set on the launch template; port 22 ingress from the
+    # source SGs is added to the first node security group)
+    enable_remote_access                    = true
+    remote_access_ec2_ssh_key               = "my-key-pair"
+    remote_access_source_security_group_ids = ["sg-0123456789abcdef0"]
+
+    # User data (EKS managed AMIs): rendered as a MIME multi-part archive and
+    # merged by EKS before its own bootstrap
+    pre_bootstrap_user_data = "echo 'hello'"         # AL2 / AL2023
+    kubelet_extra_args      = "--max-pods=110"       # AL2023 (NodeConfig kubelet flags)
+    # bootstrap_extra_args  = "[settings.kubernetes]" # Bottlerocket TOML
+    # post_bootstrap_user_data only with ami_type = "CUSTOM"
   }
 }
 ```
+
+### Tags
+
+Every resource receives `merge(tags_common, tags, <resource tags>)` plus
+`ManagedBy = "Terraform"` and the `kubernetes.io/cluster/<name> = owned` tag.
+`Name` is set on the cluster, IAM roles, security groups, KMS key, OIDC provider
+and CloudWatch log group.
 
 ## Fargate Profiles Configuration
 
@@ -537,7 +563,7 @@ Addons (Phase 2: coredns, kube-proxy, ebs-csi-driver)
 
 ```hcl
 module "vpc" {
-  source = "github.com/jhonmezaa/terraform-aws-vpc//vpc?ref=v1.1.2"
+  source = "github.com/jhonmezaa/terraform-aws-vpc//vpc?ref=v1.1.3"
 
   account_name   = "prod"
   project_name   = "myapp"
@@ -548,7 +574,7 @@ module "vpc" {
 }
 
 module "eks" {
-  source = "github.com/jhonmezaa/terraform-aws-eks//eks?ref=v3.0.6"
+  source = "github.com/jhonmezaa/terraform-aws-eks//eks?ref=v3.1.0"
 
   account_name = "prod"
   project_name = "myapp"
@@ -570,7 +596,7 @@ module "eks" {
 
 ```hcl
 module "helm_addons" {
-  source = "github.com/jhonmezaa/terraform-aws-eks-helm-addons//helm-addons?ref=v3.1.3"
+  source = "github.com/jhonmezaa/terraform-aws-eks-helm-addons//helm-addons?ref=v3.1.4"
 
   account_name         = "prod"
   project_name         = "myapp"

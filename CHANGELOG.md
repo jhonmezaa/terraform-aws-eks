@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v3.1.0] - 2026-11-17
+
+### Added
+
+- `tags_common` variable merged into the tags of every resource, plus a `ManagedBy = "Terraform"` tag; `Name` tag on the EKS cluster and the CloudWatch log group
+- Validation of `account_name` / `project_name` (1-32 characters, `^[a-z0-9-]+$`)
+- `cluster_force_update_version` and `cluster_zonal_shift_config` cluster options (parity with upstream)
+- `pod_identity_association` support in `cluster_addons`
+- Managed node groups: `update_config` map (`max_unavailable_percentage` / `max_unavailable`) and flat `max_unavailable`
+- IPv6 egress (`::/0`) rules on the cluster and node security groups when `cluster_ip_family = "ipv6"`
+- Managed node group `ami_type` validation now accepts all current EKS AMI types (AL2023 NVIDIA/Neuron, Bottlerocket FIPS/NVIDIA, Windows)
+
+### Fixed
+
+- `cluster_addons.most_recent` had no effect: `addon_version` now falls back to the version resolved by `aws_eks_addon_version` instead of `null`
+- Managed node group user data is now a MIME multi-part archive (required by EKS for managed AMIs) instead of a plain `bootstrap.sh` script, which also did not exist on AL2023. `kubelet_extra_args` is rendered as an AL2023 `NodeConfig`; `bootstrap_extra_args` is passed as Bottlerocket TOML; unsupported combinations fail at plan with a clear error
+- Managed node group remote access: the `remote_access` block cannot be combined with a launch template (EKS rejects it). The key pair is now set on the launch template and port 22 ingress from `remote_access_source_security_group_ids` is added to the first node security group
+- Managed node groups no longer use `"$Latest"` as launch template version (perpetual diff); the numeric `latest_version` is always used
+- The `create` flag of managed node groups and Fargate profiles is now honored (resources moved with `moved` blocks, no recreation)
+- Fargate profiles are skipped when `create = false` (previously failed indexing the cluster)
+- `auto_mode_node_role_arn` output no longer fails when the node role is not created
+- Hard-coded `arn:aws` / `amazonaws.com` in Auto Mode policy attachments, node and Fargate trust policies are now partition aware (no change in the `aws` partition)
+- IAM role names are truncated to the AWS limits (64 characters, 38 for `name_prefix`); only names AWS would reject are affected
+- Security group names cannot start with `sg-` (checked at plan)
+- `ssh-remote-access` example used keys ignored by the module (`key_name`, `source_security_group_ids`); `upgrade-policy` example `update_config` was ignored
+- README module sources pinned to `v3.1.0` (and integration examples to the latest `terraform-aws-vpc` v1.1.3 / `terraform-aws-eks-helm-addons` v3.1.4 tags)
+
+### Deprecated
+
+- `ami_type` (root): the unused `aws_ssm_parameter` AMI release lookup was removed
+- `launch_template_use_latest_version` (node groups): the numeric latest version is always used
+
+### Upgrade notes
+
+- Adding `ManagedBy` to the shared tags changes the managed node group launch templates, so the first apply creates a new launch template version and EKS performs a rolling update of the nodes (honoring `max_unavailable*`)
+- Add-ons without an explicit `addon_version` will be updated in place to the version resolved by `most_recent` (default `true`). Pin `addon_version` to keep the currently installed version
+- `account_name` / `project_name` with uppercase letters, underscores or more than 32 characters are now rejected; changing them renames the generated resources, so set `cluster_name` (and other explicit name overrides) to the current names first
+- `post_bootstrap_user_data`, `bootstrap_extra_args` and `kubelet_extra_args` now fail at plan for AMI types where EKS cannot honor them (those configurations were already rejected by EKS at apply)
+
 ## [v3.0.7] - 2026-10-27
 
 ### Changed
