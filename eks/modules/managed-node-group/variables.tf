@@ -58,6 +58,12 @@ variable "max_unavailable_percentage" {
   default     = 33
 }
 
+variable "max_unavailable" {
+  description = "Maximum number of unavailable nodes during update (takes precedence over max_unavailable_percentage)"
+  type        = number
+  default     = null
+}
+
 variable "capacity_type" {
   description = "Capacity type (ON_DEMAND or SPOT)"
   type        = string
@@ -88,10 +94,25 @@ variable "ami_type" {
       "CUSTOM",
       "BOTTLEROCKET_ARM_64",
       "BOTTLEROCKET_x86_64",
+      "BOTTLEROCKET_ARM_64_FIPS",
+      "BOTTLEROCKET_x86_64_FIPS",
+      "BOTTLEROCKET_ARM_64_NVIDIA",
+      "BOTTLEROCKET_x86_64_NVIDIA",
+      "BOTTLEROCKET_ARM_64_NVIDIA_FIPS",
+      "BOTTLEROCKET_x86_64_NVIDIA_FIPS",
+      "WINDOWS_CORE_2019_x86_64",
+      "WINDOWS_FULL_2019_x86_64",
+      "WINDOWS_CORE_2022_x86_64",
+      "WINDOWS_FULL_2022_x86_64",
+      "WINDOWS_CORE_2025_x86_64",
+      "WINDOWS_FULL_2025_x86_64",
       "AL2023_x86_64_STANDARD",
-      "AL2023_ARM_64_STANDARD"
+      "AL2023_ARM_64_STANDARD",
+      "AL2023_x86_64_NEURON",
+      "AL2023_x86_64_NVIDIA",
+      "AL2023_ARM_64_NVIDIA"
     ], var.ami_type)
-    error_message = "Invalid AMI type. Must be one of: AL2_x86_64, AL2_x86_64_GPU, AL2_ARM_64, CUSTOM, BOTTLEROCKET_ARM_64, BOTTLEROCKET_x86_64, AL2023_x86_64_STANDARD, AL2023_ARM_64_STANDARD"
+    error_message = "Invalid AMI type. Must be a valid EKS managed node group AMI type (AL2_*, AL2023_*, BOTTLEROCKET_*, WINDOWS_* or CUSTOM)"
   }
 }
 
@@ -131,7 +152,7 @@ variable "taints" {
 }
 
 variable "enable_remote_access" {
-  description = "Enable SSH remote access"
+  description = "Enable SSH remote access (sets the launch template key_name and adds port 22 ingress from remote_access_source_security_group_ids to the first security group in security_group_ids)"
   type        = bool
   default     = false
 }
@@ -227,7 +248,7 @@ variable "kubelet_extra_args" {
 }
 
 variable "launch_template_use_latest_version" {
-  description = "Use $Latest version of launch template"
+  description = "DEPRECATED: the node group always pins the numeric latest_version of its launch template (\"$Latest\" caused a perpetual diff). Kept for backwards compatibility"
   type        = bool
   default     = true
 }

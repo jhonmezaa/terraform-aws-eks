@@ -1,4 +1,8 @@
+data "aws_partition" "current" {}
+
 resource "aws_eks_node_group" "this" {
+  count = var.create ? 1 : 0
+
   cluster_name    = var.cluster_name
   node_group_name = var.node_group_name
   node_role_arn   = var.create_iam_role ? aws_iam_role.this[0].arn : var.iam_role_arn
@@ -14,7 +18,8 @@ resource "aws_eks_node_group" "this" {
   }
 
   update_config {
-    max_unavailable_percentage = var.max_unavailable_percentage
+    max_unavailable            = var.max_unavailable
+    max_unavailable_percentage = var.max_unavailable == null ? var.max_unavailable_percentage : null
   }
 
   capacity_type  = var.capacity_type
@@ -35,17 +40,15 @@ resource "aws_eks_node_group" "this" {
     }
   }
 
-  dynamic "remote_access" {
-    for_each = var.enable_remote_access ? [1] : []
-    content {
-      ec2_ssh_key               = var.remote_access_ec2_ssh_key
-      source_security_group_ids = var.remote_access_source_security_group_ids
-    }
-  }
+  # NOTE: `remote_access` cannot be combined with a launch template (the EKS API
+  # rejects it). Remote access is configured through the launch template
+  # `key_name` plus SSH ingress rules instead (see launch-template.tf).
 
+  # Always pin the numeric latest version. "$Latest" is converted by the API to a
+  # number on read and caused a perpetual diff.
   launch_template {
-    id      = aws_launch_template.this.id
-    version = var.launch_template_use_latest_version ? "$Latest" : aws_launch_template.this.latest_version
+    id      = aws_launch_template.this[0].id
+    version = aws_launch_template.this[0].latest_version
   }
 
   tags = merge(
@@ -61,4 +64,9 @@ resource "aws_eks_node_group" "this" {
     create_before_destroy = true
     ignore_changes        = [scaling_config[0].desired_size]
   }
+}
+
+moved {
+  from = aws_eks_node_group.this
+  to   = aws_eks_node_group.this[0]
 }
