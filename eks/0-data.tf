@@ -15,13 +15,6 @@ data "tls_certificate" "this" {
   url = aws_eks_cluster.this[0].identity[0].oidc[0].issuer
 }
 
-# Latest EKS optimized AMI
-data "aws_ssm_parameter" "eks_ami_release_version" {
-  count = var.create ? 1 : 0
-
-  name = "/aws/service/eks/optimized-ami/${var.cluster_version}/${var.ami_type}/recommended/release_version"
-}
-
 # EKS addon versions
 data "aws_eks_addon_version" "this" {
   for_each = var.create && var.cluster_addons != null ? var.cluster_addons : {}

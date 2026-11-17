@@ -5,8 +5,8 @@
 resource "aws_iam_role" "cluster" {
   count = var.create && var.create_cluster_iam_role ? 1 : 0
 
-  name        = !var.cluster_iam_role_use_name_prefix ? coalesce(var.cluster_iam_role_name, "${local.cluster_name}-cluster") : null
-  name_prefix = var.cluster_iam_role_use_name_prefix ? "${local.cluster_name}-cluster-" : null
+  name        = !var.cluster_iam_role_use_name_prefix ? local.cluster_iam_role_name : null
+  name_prefix = var.cluster_iam_role_use_name_prefix ? local.cluster_iam_role_name_prefix : null
   path        = var.cluster_iam_role_path
   description = var.cluster_iam_role_description
 
@@ -50,10 +50,10 @@ resource "aws_iam_role_policy_attachment" "cluster_additional" {
 # Required when enable_auto_mode = true
 resource "aws_iam_role_policy_attachment" "cluster_auto_mode" {
   for_each = var.create && var.create_cluster_iam_role && var.enable_auto_mode ? toset([
-    "arn:aws:iam::aws:policy/AmazonEKSComputePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKSBlockStoragePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKSLoadBalancingPolicy",
-    "arn:aws:iam::aws:policy/AmazonEKSNetworkingPolicy",
+    "${local.iam_policy_prefix}/AmazonEKSComputePolicy",
+    "${local.iam_policy_prefix}/AmazonEKSBlockStoragePolicy",
+    "${local.iam_policy_prefix}/AmazonEKSLoadBalancingPolicy",
+    "${local.iam_policy_prefix}/AmazonEKSNetworkingPolicy",
   ]) : []
 
   role       = aws_iam_role.cluster[0].name
@@ -150,7 +150,7 @@ resource "aws_eks_cluster" "this" {
     content {
       enabled       = true
       node_pools    = var.auto_mode_node_pools
-      node_role_arn = var.auto_mode_node_role_arn != null ? var.auto_mode_node_role_arn : (var.create_node_iam_role ? aws_iam_role.node[0].arn : null)
+      node_role_arn = local.auto_mode_node_role_arn
     }
   }
 
@@ -164,11 +164,20 @@ resource "aws_eks_cluster" "this" {
     }
   }
 
+  dynamic "zonal_shift_config" {
+    for_each = var.cluster_zonal_shift_config != null ? [var.cluster_zonal_shift_config] : []
+
+    content {
+      enabled = zonal_shift_config.value.enabled
+    }
+  }
+
   bootstrap_self_managed_addons = var.enable_auto_mode ? false : var.bootstrap_self_managed_addons
+  force_update_version          = var.cluster_force_update_version
 
   tags = merge(
-    local.cluster_tags,
-    var.cluster_tags
+    { Name = local.cluster_name },
+    local.cluster_tags
   )
 
   timeouts {
@@ -193,8 +202,8 @@ resource "aws_eks_cluster" "this" {
 resource "aws_iam_role" "node" {
   count = var.create && var.create_node_iam_role ? 1 : 0
 
-  name        = !var.node_iam_role_use_name_prefix ? coalesce(var.node_iam_role_name, "${local.cluster_name}-node") : null
-  name_prefix = var.node_iam_role_use_name_prefix ? "${local.cluster_name}-node-" : null
+  name        = !var.node_iam_role_use_name_prefix ? local.node_iam_role_name : null
+  name_prefix = var.node_iam_role_use_name_prefix ? local.node_iam_role_name_prefix : null
   path        = var.node_iam_role_path
   description = var.node_iam_role_description
 
@@ -237,8 +246,8 @@ resource "aws_iam_role_policy_attachment" "node_additional" {
 # Auto Mode IAM Policies (minimal policies required for Auto Mode)
 resource "aws_iam_role_policy_attachment" "node_auto_mode" {
   for_each = var.create && var.create_node_iam_role && var.enable_auto_mode ? toset([
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodeMinimalPolicy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly"
+    "${local.iam_policy_prefix}/AmazonEKSWorkerNodeMinimalPolicy",
+    "${local.iam_policy_prefix}/AmazonEC2ContainerRegistryPullOnly"
   ]) : []
 
   role       = aws_iam_role.node[0].name

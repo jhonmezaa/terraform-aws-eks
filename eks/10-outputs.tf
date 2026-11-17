@@ -364,5 +364,5 @@ output "auto_mode_node_pools" {
 
 output "auto_mode_node_role_arn" {
   description = "IAM role ARN used by Auto Mode nodes"
-  value       = var.enable_auto_mode ? (var.auto_mode_node_role_arn != null ? var.auto_mode_node_role_arn : (var.create_node_iam_role ? aws_iam_role.node[0].arn : null)) : null
+  value       = var.enable_auto_mode ? local.auto_mode_node_role_arn : null
 }

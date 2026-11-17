@@ -5,7 +5,7 @@
 resource "aws_security_group" "cluster" {
   count = var.create && var.create_cluster_security_group ? 1 : 0
 
-  name        = !var.cluster_security_group_use_name_prefix ? coalesce(var.cluster_security_group_name, "${local.cluster_name}-cluster") : null
+  name        = !var.cluster_security_group_use_name_prefix ? local.cluster_security_group_name : null
   name_prefix = var.cluster_security_group_use_name_prefix ? "${local.cluster_name}-cluster-" : null
   description = var.cluster_security_group_description
   vpc_id      = var.vpc_id
@@ -18,6 +18,11 @@ resource "aws_security_group" "cluster" {
 
   lifecycle {
     create_before_destroy = true
+
+    precondition {
+      condition     = !startswith(lower(var.cluster_security_group_use_name_prefix ? local.cluster_name : local.cluster_security_group_name), "sg-")
+      error_message = "El nombre del security group del cluster no puede empezar por \"sg-\"."
+    }
   }
 }
 
@@ -45,6 +50,18 @@ resource "aws_security_group_rule" "cluster_egress_all" {
   description       = "Allow all egress"
 }
 
+resource "aws_security_group_rule" "cluster_egress_all_ipv6" {
+  count = var.create && var.create_cluster_security_group && var.cluster_ip_family == "ipv6" ? 1 : 0
+
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  ipv6_cidr_blocks  = ["::/0"]
+  security_group_id = aws_security_group.cluster[0].id
+  description       = "Allow all IPv6 egress"
+}
+
 resource "aws_security_group_rule" "cluster_additional" {
   for_each = var.create && var.create_cluster_security_group ? var.cluster_security_group_additional_rules : {}
 
@@ -67,7 +84,7 @@ resource "aws_security_group_rule" "cluster_additional" {
 resource "aws_security_group" "node" {
   count = var.create && var.create_node_security_group ? 1 : 0
 
-  name        = !var.node_security_group_use_name_prefix ? coalesce(var.node_security_group_name, "${local.cluster_name}-node") : null
+  name        = !var.node_security_group_use_name_prefix ? local.node_security_group_name : null
   name_prefix = var.node_security_group_use_name_prefix ? "${local.cluster_name}-node-" : null
   description = var.node_security_group_description
   vpc_id      = var.vpc_id
@@ -83,6 +100,11 @@ resource "aws_security_group" "node" {
 
   lifecycle {
     create_before_destroy = true
+
+    precondition {
+      condition     = !startswith(lower(var.node_security_group_use_name_prefix ? local.cluster_name : local.node_security_group_name), "sg-")
+      error_message = "El nombre del security group de nodos no puede empezar por \"sg-\"."
+    }
   }
 }
 
@@ -144,6 +166,18 @@ resource "aws_security_group_rule" "node_egress_all" {
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.node[0].id
   description       = "Allow all egress"
+}
+
+resource "aws_security_group_rule" "node_egress_all_ipv6" {
+  count = var.create && var.create_node_security_group && var.cluster_ip_family == "ipv6" ? 1 : 0
+
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  ipv6_cidr_blocks  = ["::/0"]
+  security_group_id = aws_security_group.node[0].id
+  description       = "Allow all IPv6 egress"
 }
 
 resource "aws_security_group_rule" "node_additional" {

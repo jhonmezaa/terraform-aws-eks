@@ -8,6 +8,12 @@ variable "create" {
   default     = true
 }
 
+variable "tags_common" {
+  description = "Common tags applied to all resources (merged before `tags` and resource-specific tags)"
+  type        = map(string)
+  default     = {}
+}
+
 variable "tags" {
   description = "Tags to apply to all resources"
   type        = map(string)
@@ -29,11 +35,21 @@ variable "use_region_prefix" {
 variable "account_name" {
   description = "Account name for resource naming"
   type        = string
+
+  validation {
+    condition     = length(var.account_name) >= 1 && length(var.account_name) <= 32 && can(regex("^[a-z0-9-]+$", var.account_name))
+    error_message = "account_name debe tener entre 1 y 32 caracteres y solo puede contener letras minúsculas, números y guiones."
+  }
 }
 
 variable "project_name" {
   description = "Project name for resource naming"
   type        = string
+
+  validation {
+    condition     = length(var.project_name) >= 1 && length(var.project_name) <= 32 && can(regex("^[a-z0-9-]+$", var.project_name))
+    error_message = "project_name debe tener entre 1 y 32 caracteres y solo puede contener letras minúsculas, números y guiones."
+  }
 }
 
 ################################################################################
@@ -143,6 +159,20 @@ variable "cluster_access_config" {
   type = object({
     authentication_mode                         = optional(string)
     bootstrap_cluster_creator_admin_permissions = optional(bool)
+  })
+  default = null
+}
+
+variable "cluster_force_update_version" {
+  description = "Force a Kubernetes version update even if pod disruption budgets or other issues would block it (`force_update_version`)"
+  type        = bool
+  default     = null
+}
+
+variable "cluster_zonal_shift_config" {
+  description = "Zonal shift configuration for the cluster (ARC zonal shift)"
+  type = object({
+    enabled = bool
   })
   default = null
 }
@@ -618,6 +648,10 @@ variable "cluster_addons" {
     resolve_conflicts_on_create = optional(string, "NONE")
     resolve_conflicts_on_update = optional(string, "OVERWRITE")
     service_account_role_arn    = optional(string)
+    pod_identity_association = optional(list(object({
+      role_arn        = string
+      service_account = string
+    })), [])
     timeouts = optional(object({
       create = optional(string)
       update = optional(string)
@@ -653,7 +687,7 @@ variable "enable_karpenter" {
 ################################################################################
 
 variable "ami_type" {
-  description = "Default AMI type for data source lookups"
+  description = "DEPRECATED: no longer used (the unused SSM AMI release lookup was removed). Kept for backwards compatibility"
   type        = string
   default     = "amazon-linux-2023/x86_64/standard"
 }

@@ -11,6 +11,7 @@ resource "aws_cloudwatch_log_group" "this" {
   log_group_class   = var.cloudwatch_log_group_class
 
   tags = merge(
+    { Name = local.cloudwatch_log_group_name },
     local.tags,
     var.cloudwatch_log_group_tags
   )
