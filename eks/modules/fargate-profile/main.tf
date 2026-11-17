@@ -1,4 +1,6 @@
 resource "aws_eks_fargate_profile" "this" {
+  count = var.create ? 1 : 0
+
   cluster_name           = var.cluster_name
   fargate_profile_name   = var.fargate_profile_name
   pod_execution_role_arn = var.create_iam_role ? aws_iam_role.this[0].arn : var.pod_execution_role_arn
@@ -25,4 +27,9 @@ resource "aws_eks_fargate_profile" "this" {
     create = try(var.timeouts.create, null)
     delete = try(var.timeouts.delete, null)
   }
+}
+
+moved {
+  from = aws_eks_fargate_profile.this
+  to   = aws_eks_fargate_profile.this[0]
 }
