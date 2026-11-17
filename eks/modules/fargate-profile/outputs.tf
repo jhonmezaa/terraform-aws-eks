@@ -1,16 +1,16 @@
 output "fargate_profile_id" {
   description = "Fargate profile ID"
-  value       = try(aws_eks_fargate_profile.this.id, null)
+  value       = try(aws_eks_fargate_profile.this[0].id, null)
 }
 
 output "fargate_profile_arn" {
   description = "Fargate profile ARN"
-  value       = try(aws_eks_fargate_profile.this.arn, null)
+  value       = try(aws_eks_fargate_profile.this[0].arn, null)
 }
 
 output "fargate_profile_status" {
   description = "Status of the Fargate profile"
-  value       = try(aws_eks_fargate_profile.this.status, null)
+  value       = try(aws_eks_fargate_profile.this[0].status, null)
 }
 
 output "iam_role_arn" {

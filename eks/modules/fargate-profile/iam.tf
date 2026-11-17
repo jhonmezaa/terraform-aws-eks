@@ -1,5 +1,7 @@
+data "aws_partition" "current" {}
+
 resource "aws_iam_role" "this" {
-  count = var.create_iam_role ? 1 : 0
+  count = var.create && var.create_iam_role ? 1 : 0
 
   name_prefix = "${var.fargate_profile_name}-"
 
@@ -10,7 +12,7 @@ resource "aws_iam_role" "this" {
         Action = "sts:AssumeRole"
         Effect = "Allow"
         Principal = {
-          Service = "eks-fargate-pods.amazonaws.com"
+          Service = "eks-fargate-pods.${data.aws_partition.current.dns_suffix}"
         }
       }
     ]
@@ -25,14 +27,14 @@ resource "aws_iam_role" "this" {
 }
 
 resource "aws_iam_role_policy_attachment" "pod_execution" {
-  count = var.create_iam_role ? 1 : 0
+  count = var.create && var.create_iam_role ? 1 : 0
 
   role       = aws_iam_role.this[0].name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
+  policy_arn = "arn:${data.aws_partition.current.partition}:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
 }
 
 resource "aws_iam_role_policy_attachment" "additional" {
-  for_each = var.create_iam_role ? var.iam_role_additional_policies : {}
+  for_each = var.create && var.create_iam_role ? var.iam_role_additional_policies : {}
 
   role       = aws_iam_role.this[0].name
   policy_arn = each.value
