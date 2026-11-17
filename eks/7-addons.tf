@@ -8,12 +8,21 @@ resource "aws_eks_addon" "before_compute" {
   cluster_name = aws_eks_cluster.this[0].name
   addon_name   = coalesce(each.value.addon_name, each.key)
 
-  addon_version               = try(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
+  addon_version               = coalesce(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
   configuration_values        = try(each.value.configuration_values, null)
   preserve                    = try(each.value.preserve, true)
   resolve_conflicts_on_create = try(each.value.resolve_conflicts_on_create, "NONE")
   resolve_conflicts_on_update = try(each.value.resolve_conflicts_on_update, "OVERWRITE")
   service_account_role_arn    = try(each.value.service_account_role_arn, null)
+
+  dynamic "pod_identity_association" {
+    for_each = each.value.pod_identity_association
+
+    content {
+      role_arn        = pod_identity_association.value.role_arn
+      service_account = pod_identity_association.value.service_account
+    }
+  }
 
   tags = merge(
     local.tags,
@@ -37,12 +46,21 @@ resource "aws_eks_addon" "this" {
   cluster_name = aws_eks_cluster.this[0].name
   addon_name   = coalesce(each.value.addon_name, each.key)
 
-  addon_version               = try(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
+  addon_version               = coalesce(each.value.addon_version, data.aws_eks_addon_version.this[each.key].version)
   configuration_values        = try(each.value.configuration_values, null)
   preserve                    = try(each.value.preserve, true)
   resolve_conflicts_on_create = try(each.value.resolve_conflicts_on_create, "NONE")
   resolve_conflicts_on_update = try(each.value.resolve_conflicts_on_update, "OVERWRITE")
   service_account_role_arn    = try(each.value.service_account_role_arn, null)
+
+  dynamic "pod_identity_association" {
+    for_each = each.value.pod_identity_association
+
+    content {
+      role_arn        = pod_identity_association.value.role_arn
+      service_account = pod_identity_association.value.service_account
+    }
+  }
 
   tags = merge(
     local.tags,
